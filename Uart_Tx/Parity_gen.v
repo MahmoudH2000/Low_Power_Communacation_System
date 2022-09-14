@@ -7,5 +7,4 @@ module Parity_gen #(parameter width = 8)(
 
 assign Parity_bit = Parity_type ? (~^Data):(^Data);
 
-    
 endmodule

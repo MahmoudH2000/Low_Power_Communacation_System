@@ -41,7 +41,11 @@ Data_valid_tb  = 1'b1;
 Data_valid_tb  = 1'b0;
 #5
 Data_tb        = 8'b10101010;
-#60
+#25
+Data_valid_tb  = 1'b1;
+#5
+Data_valid_tb  = 1'b0;
+#26
 Data_valid_tb  = 1'b1;
 #5
 Data_valid_tb  = 1'b0;
@@ -49,7 +53,6 @@ Data_valid_tb  = 1'b0;
 $stop;
 
 end
- 
  
 always #2.5 CLK_tb = ~CLK_tb ;
 

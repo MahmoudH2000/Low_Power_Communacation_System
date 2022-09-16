@@ -18,17 +18,6 @@ wire       Ser_EN;
 wire       Busy_comp;
 reg        Tx_out_comp;
 
-// initial begin
-//     CLK = 1;
-//     Reset = 1;
-//     Reset = 0;
-//     Reset = 1;
-//     Parity_type = 1;
-
-// end
-
-// always #5 CLK = ~CLK
-
 always @(*) begin
     case (Mux_control)
         2'b00: Tx_out_comp = 1'b0;

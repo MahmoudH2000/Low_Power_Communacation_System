@@ -1,3 +1,4 @@
 Uart_Tx/work/
+Tx_Control.v
 transcript
 vsim.wlf

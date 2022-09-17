@@ -6,7 +6,7 @@ module UART_Tx  #(parameter width = 8)(
     input  wire             Parity_EN,   // enable the parity or send with out it
     input  wire             Data_valid,  // High for one CLK cycle it tells me that the data is ready
     input  wire [width-1:0] Data,        
-    output reg              Busy,        // high when the uart is sending (I.e. not Idle)
+    inout  reg              Busy,        // high when the uart is sending (I.e. not Idle)
     output reg              Tx_out       // data sent
 );
 
@@ -22,7 +22,6 @@ wire [1:0] Mux_control;
 wire       Ser_done;
 wire       Ser_Data;
 wire       Ser_EN;
-wire       Busy_comp;
 reg        Tx_out_comp;
 
 
@@ -44,11 +43,9 @@ end
 always @(posedge CLK, negedge Reset) begin
     if (!Reset) begin
         Tx_out <= 1'b0;
-        Busy   <= 1'b0;
     end
     else begin
         Tx_out <= Tx_out_comp;
-        Busy   <= Busy_comp;
     end
 end
 
@@ -64,7 +61,7 @@ Tx_Control_mealy Tx_Control_mealy_top(
     .Parity_EN(Parity_EN),
     .Ser_EN(Ser_EN),
     .Mux_control(Mux_control),
-    .Busy(Busy_comp)
+    .Busy(Busy)
 );
 
 /* serializer instantiation */

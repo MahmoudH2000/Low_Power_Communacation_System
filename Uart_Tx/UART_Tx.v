@@ -2,14 +2,21 @@ module UART_Tx  #(parameter width = 8)(
     //input & output ports
     input  wire             CLK,
     input  wire             Reset,
-    input  wire             Parity_type,
-    input  wire             Parity_EN,
-    input  wire             Data_valid,
-    input  wire [width-1:0] Data,
-    output reg              Busy,
-    output reg              Tx_out
+    input  wire             Parity_type, // odd or even
+    input  wire             Parity_EN,   // enable the parity or send with out it
+    input  wire             Data_valid,  // High for one CLK cycle it tells me that the data is ready
+    input  wire [width-1:0] Data,        
+    output reg              Busy,        // high when the uart is sending (I.e. not Idle)
+    output reg              Tx_out       // data sent
 );
 
+/*
+the Uart receved the data and waits fo the Data_valid signal 
+when it gets high the serializer and the FSM start working
+*/ 
+
+
+/*      internal signals    */
 wire       Parity_bit;
 wire [1:0] Mux_control;
 wire       Ser_done;
@@ -18,6 +25,12 @@ wire       Ser_EN;
 wire       Busy_comp;
 reg        Tx_out_comp;
 
+
+/*   the MUX that controls which output to send
+     start bit                     = 00
+     stop bit and Idle             = 01
+     data (I.e. serializer output) = 10 
+     parity bit                    = 11            */
 always @(*) begin
     case (Mux_control)
         2'b00: Tx_out_comp = 1'b0;
@@ -27,6 +40,7 @@ always @(*) begin
     endcase
 end
 
+/* registering the outputs */
 always @(posedge CLK, negedge Reset) begin
     if (!Reset) begin
         Tx_out <= 1'b0;
@@ -38,10 +52,11 @@ always @(posedge CLK, negedge Reset) begin
     end
 end
 
+/* Parit bit calculation*/
 assign Parity_bit = Parity_type ? (~^Data):(^Data);
 
+/* FSM instantiation */
 Tx_Control_mealy Tx_Control_mealy_top(
-    //input & output ports
     .CLK(CLK),
     .Reset(Reset),
     .Ser_done(Ser_done),
@@ -52,8 +67,8 @@ Tx_Control_mealy Tx_Control_mealy_top(
     .Busy(Busy_comp)
 );
 
+/* serializer instantiation */
 serializer #(.width(width)) serializer_top(
-    //input & output ports
     .CLK(CLK),
     .Reset(Reset),
     .Data(Data),

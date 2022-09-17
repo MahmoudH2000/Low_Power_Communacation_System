@@ -6,7 +6,7 @@ module UART_Tx  #(parameter width = 8)(
     input  wire             Parity_EN,   // enable the parity or send with out it
     input  wire             Data_valid,  // High for one CLK cycle it tells me that the data is ready
     input  wire [width-1:0] Data,        
-    inout  reg              Busy,        // high when the uart is sending (I.e. not Idle)
+    output wire             Busy,        // high when the uart is sending (I.e. not Idle)
     output reg              Tx_out       // data sent
 );
 

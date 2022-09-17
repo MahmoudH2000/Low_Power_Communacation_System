@@ -6,13 +6,12 @@ module serializer #(parameter width = 8)(
     input  wire             Data_valid,
     input  wire             Ser_EN,
     input  wire             Busy,
-    output reg              Ser_data_out,
+    output reg              Ser_data,
     output wire             Ser_done
 );
 
 reg [width-1:0]         Reg_Data;
 reg [$clog2(width):0]   counter;
-reg                     Ser_data;
 
 assign Ser_done = (counter == (width)) ? 1:0;
 
@@ -32,15 +31,6 @@ always @(posedge CLK, negedge Reset) begin
         counter <= counter + 1;
     end
     
-end
-
-always @(posedge CLK, negedge Reset) begin
-    if (!Reset) begin
-        Ser_data_out <= 1'b0;
-    end
-    else begin
-        Ser_data_out <= Ser_data;
-    end
 end
     
 endmodule

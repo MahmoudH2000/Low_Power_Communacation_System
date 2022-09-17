@@ -35,7 +35,7 @@ Data_valid_tb  = 1'b0;
 Reset_tb       = 1'b0;    
 #2.5
 Reset_tb       = 1'b1;   
-#100
+#102
 Data_valid_tb  = 1'b1;
 #5
 Data_valid_tb  = 1'b0;
@@ -45,7 +45,7 @@ Data_tb        = 8'b10101010;
 Data_valid_tb  = 1'b1;
 #5
 Data_valid_tb  = 1'b0;
-#26
+#20
 Data_valid_tb  = 1'b1;
 #5
 Data_valid_tb  = 1'b0;

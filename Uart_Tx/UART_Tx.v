@@ -60,7 +60,7 @@ serializer #(.width(width)) serializer_top(
     .Data_valid(Data_valid),
     .Ser_EN(Ser_EN),
     .Busy(Busy),
-    .Ser_data_out(Ser_Data),
+    .Ser_data(Ser_Data),
     .Ser_done(Ser_done)
 );
     

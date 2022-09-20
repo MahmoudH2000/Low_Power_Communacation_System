@@ -6,12 +6,12 @@ module UART_Tx  #(parameter width = 8)(
     input  wire             Parity_EN,   // enable the parity or send with out it
     input  wire             Data_valid,  // High for one CLK cycle it tells me that the data is ready
     input  wire [width-1:0] Data,        
-    output wire             Busy,        // high when the uart is sending (I.e. not Idle)
+    output reg              Busy,        // high when the uart is sending (I.e. not Idle)
     output reg              Tx_out       // data sent
 );
 
 /*
-the Uart receved the data and waits fo the Data_valid signal 
+the Uart receved the data and waits for the Data_valid signal 
 when it gets high the serializer and the FSM start working
 */ 
 
@@ -23,6 +23,8 @@ wire       Ser_done;
 wire       Ser_Data;
 wire       Ser_EN;
 reg        Tx_out_comp;
+wire       Busy_comp;
+wire       valid_instop;
 
 
 /*   the MUX that controls which output to send
@@ -43,9 +45,11 @@ end
 always @(posedge CLK, negedge Reset) begin
     if (!Reset) begin
         Tx_out <= 1'b0;
+        Busy   <= 0;
     end
     else begin
         Tx_out <= Tx_out_comp;
+        Busy   <= Busy_comp;
     end
 end
 
@@ -53,7 +57,7 @@ end
 assign Parity_bit = Parity_type ? (~^Data):(^Data);
 
 /* FSM instantiation */
-Tx_Control_mealy Tx_Control_mealy_top(
+Tx_Control Tx_Control_mealy_top(
     .CLK(CLK),
     .Reset(Reset),
     .Ser_done(Ser_done),
@@ -61,17 +65,19 @@ Tx_Control_mealy Tx_Control_mealy_top(
     .Parity_EN(Parity_EN),
     .Ser_EN(Ser_EN),
     .Mux_control(Mux_control),
-    .Busy(Busy)
+    .Busy(Busy_comp),
+    .valid_instop(valid_instop)
 );
 
 /* serializer instantiation */
 serializer #(.width(width)) serializer_top(
     .CLK(CLK),
     .Reset(Reset),
+    .valid_instop(valid_instop),
     .Data(Data),
     .Data_valid(Data_valid),
     .Ser_EN(Ser_EN),
-    .Busy(Busy),
+    .Busy(Busy_comp),
     .Ser_data(Ser_Data),
     .Ser_done(Ser_done)
 );

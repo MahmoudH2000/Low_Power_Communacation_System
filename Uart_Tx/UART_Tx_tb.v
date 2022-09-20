@@ -54,13 +54,13 @@ Data_tb        = 8'b10101010;
 Data_valid_tb  = 1'b1;
 #5
 Data_valid_tb  = 1'b0;
-#20
+#15
 
 // raising the data valid to send the new data again and chaning the parity
-Parity_type_tb = 1'b1;
 Data_valid_tb  = 1'b1;
 #5
 Data_valid_tb  = 1'b0;
+Parity_type_tb = 1'b1;
 #100
 
 // disenabling the parity bit and puting new data on the bus

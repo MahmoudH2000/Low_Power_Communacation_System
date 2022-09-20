@@ -2,6 +2,7 @@ module serializer #(parameter width = 8)(
     //input & output ports
     input  wire             CLK,
     input  wire             Reset,
+    input  wire             valid_instop,
     input  wire [width-1:0] Data,
     input  wire             Data_valid,  // High for one CLK cycle it tells me that the data is ready
     input  wire             Ser_EN,      // sent by the FSM to tell the serializer to start working
@@ -32,9 +33,8 @@ always @(posedge CLK, negedge Reset) begin
         Reg_Data <= 0;
         counter  <= 0;
     end
-    else if (Data_valid && !Busy) begin
-        Ser_data <= Data[0];
-        Reg_Data <= Data>>1'b1; // shift the data because we already took the first bit
+    else if (valid_instop || (Data_valid && !Busy)) begin
+        Reg_Data <= Data; // shift the data because we already took the first bit
         counter  <= 0;          // begin to count
     end
     else if(Ser_EN) begin

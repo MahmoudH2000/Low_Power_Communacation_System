@@ -1,4 +1,4 @@
-module Tx_Control_mealy (
+module Tx_Control (
     //input & output ports
     input  wire       CLK,
     input  wire       Reset,
@@ -6,13 +6,14 @@ module Tx_Control_mealy (
     input  wire       Data_valid,     // high for one CLK cycle it tells me that the data is ready
     input  wire       Parity_EN,      // parity Enable
     output reg        Ser_EN,         // to tell the serializer to start working
+    output reg        Busy,           // high when the uart is sending (I.e. not Idle)   
     output reg  [1:0] Mux_control,   
-    output reg        Busy            // high when the uart is sending (I.e. not Idle)
+    output reg        valid_instop    // if the data_valid is high during the stop state it gets high to make it send data
 );
 
 /*
 the module is a finite state machine that controls the uart workings. 
-it has four state either Idle, start, send, and Parity.
+it has five state either Idle, start, send, and Parity.
 when the data_valid is raised the Ser_EN gets high and it sends the start bit hence he next state is start.
 as it sends the start bit the serializer has already loaded the data and is ready to send the first bit.
 next the FSM imediatly goes to the Send state and doen't change its state till the serializer send the Ser_done.
@@ -22,24 +23,22 @@ if not we go the Idle state directly.
 
 
 /*   state diclation   */
-localparam Idle   = 2'b00;
-localparam Start  = 2'b01;
-localparam Send   = 2'b11;
-localparam Parity = 2'b10;
+localparam Idle   = 3'b000;
+localparam Start  = 3'b001;
+localparam Send   = 3'b011;
+localparam Parity = 3'b010;
+localparam Stop   = 3'b110;
 
-reg [1:0] next_state;
-reg [1:0] curr_state;
-reg       Busy_comp;
+reg [2:0] next_state;
+reg [2:0] curr_state;
 
 /*  state transision always */
 always @(posedge CLK, negedge Reset) begin
     if (!Reset) begin
         curr_state  <= Idle;
-        Busy        <= 0;
     end
     else begin
-        curr_state <= next_state;
-        Busy       <= Busy_comp;
+        curr_state  <= next_state;
     end
 end
 
@@ -48,62 +47,73 @@ always @(*) begin
     case (curr_state)
 
         Idle: begin
-            if (Data_valid && !Busy) begin
+            if (Data_valid) begin
                 next_state  = Start;
-                Mux_control = 2'b00;
-                Busy_comp   = 1'b1;
-                Ser_EN      = 1'b0;
+                
             end
             else begin
                 next_state  = Idle;
-                Mux_control = 2'b01;
-                Busy_comp   = 1'b0;
-                Ser_EN      = 1'b0;
             end
+            Mux_control  = 2'b01;
+            Busy         = 1'b0;
+            Ser_EN       = 1'b0;
+            valid_instop = 0;
         end
         
         Start: begin
             next_state  = Send;
-            Mux_control = 2'b10;
-            Busy_comp   = 1'b1;
+            Mux_control = 2'b00;
+            Busy        = 1'b1;
             Ser_EN      = 1'b1;
+            valid_instop = 0;
         end 
 
         Send: begin
             if (!Ser_done) begin
                 next_state  = Send; 
-                Mux_control = 2'b10;
-                Busy_comp   = 1'b1;
-                Ser_EN      = 1'b1;
             end
             else begin
                 if (Parity_EN) begin
                     next_state  = Parity;
-                    Mux_control = 2'b11;
-                    Busy_comp   = 1'b1;
-                    Ser_EN      = 1'b0;
                 end
                 else begin
-                    next_state  = Idle;
-                    Mux_control = 2'b01;
-                    Busy_comp   = 1'b1;
-                    Ser_EN      = 1'b0;
+                    next_state  = Stop;
                 end
             end
+            Mux_control = 2'b10;
+            Busy        = 1'b1;
+            Ser_EN      = 1'b1;
+            valid_instop = 0;
         end
 
         Parity: begin
-            next_state = Idle;
+            next_state  = Stop;
+            Mux_control = 2'b11;
+            Busy        = 1'b1;
+            Ser_EN      = 1'b0;
+            valid_instop = 0;
+        end
+
+        Stop: begin
+            if (Data_valid) begin
+                next_state  = Start;
+                valid_instop = 1;
+            end
+            else begin
+                next_state  = Idle;
+                valid_instop = 0;
+            end
             Mux_control = 2'b01;
-            Busy_comp   = 1'b1;
+            Busy        = 1'b1;
             Ser_EN      = 1'b0;
         end
 
         default: begin
             next_state  = Idle;
             Mux_control = 2'b01;
-            Busy_comp   = 1'b0;
+            Busy        = 1'b0;
             Ser_EN      = 1'b0;
+            valid_instop = 0;
         end 
     endcase
 end

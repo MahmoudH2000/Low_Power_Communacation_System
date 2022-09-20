@@ -57,7 +57,7 @@ end
 assign Parity_bit = Parity_type ? (~^Data):(^Data);
 
 /* FSM instantiation */
-Tx_Control Tx_Control_mealy_top(
+Tx_Control Tx_Control_top(
     .CLK(CLK),
     .Reset(Reset),
     .Ser_done(Ser_done),

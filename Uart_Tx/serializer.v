@@ -34,7 +34,7 @@ always @(posedge CLK, negedge Reset) begin
         counter  <= 0;
     end
     else if (valid_instop || (Data_valid && !Busy)) begin
-        Reg_Data <= Data; // shift the data because we already took the first bit
+        Reg_Data <= Data;       // register the data
         counter  <= 0;          // begin to count
     end
     else if(Ser_EN) begin

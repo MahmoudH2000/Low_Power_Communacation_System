@@ -1,13 +1,13 @@
-module UART_Tx  #(parameter width = 8)(
+module UART_Tx (
     //input & output ports
-    input  wire             CLK,
-    input  wire             Reset,
-    input  wire             Parity_type, // odd or even
-    input  wire             Parity_EN,   // enable the parity or send with out it
-    input  wire             Data_valid,  // High for one CLK cycle it tells me that the data is ready
-    input  wire [width-1:0] Data,        
-    output reg              Busy,        // high when the uart is sending (I.e. not Idle)
-    output reg              Tx_out       // data sent
+    input  wire          CLK,
+    input  wire          Reset,
+    input  wire          Parity_type, // odd or even
+    input  wire          Parity_EN,   // enable the parity or send with out it
+    input  wire          Data_valid,  // High for one CLK cycle it tells me that the data is ready
+    input  wire  [7:0]   Data,        
+    output reg           Busy,        // high when the uart is sending (I.e. not Idle)
+    output reg           Tx_out       // data sent
 );
 
 /*
@@ -70,7 +70,7 @@ Tx_Control Tx_Control_top(
 );
 
 /* serializer instantiation */
-serializer #(.width(width)) serializer_top(
+serializer serializer_top(
     .CLK(CLK),
     .Reset(Reset),
     .valid_instop(valid_instop),

@@ -1,9 +1,9 @@
-module serializer #(parameter width = 8)(
+module serializer (
     //input & output ports
     input  wire             CLK,
     input  wire             Reset,
     input  wire             valid_instop,
-    input  wire [width-1:0] Data,
+    input  wire [7:0]       Data,
     input  wire             Data_valid,  // High for one CLK cycle it tells me that the data is ready
     input  wire             Ser_EN,      // sent by the FSM to tell the serializer to start working
     input  wire             Busy,        // to tell the serializer that the uart is sending so don't accept new data
@@ -19,13 +19,13 @@ output: d[0] d[1] d[2] .... d[n-1]
 
 
 /*      internal signals    */
-reg [width-1:0]         Reg_Data;
-reg [$clog2(width):0]   counter;
+reg [7:0]   Reg_Data;
+reg [3:0]   counter;
 
 
 /* if counter equal the number of bits of the input then the serializer is done */
 always @(*) begin
-    if(counter == width) begin
+    if(counter == 4'b1000) begin
         Ser_done = 1'b1;
     end
     else begin

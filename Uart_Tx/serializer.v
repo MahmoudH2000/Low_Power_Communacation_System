@@ -8,7 +8,7 @@ module serializer #(parameter width = 8)(
     input  wire             Ser_EN,      // sent by the FSM to tell the serializer to start working
     input  wire             Busy,        // to tell the serializer that the uart is sending so don't accept new data
     output reg              Ser_data,    // serialized output
-    output wire             Ser_done     // when the serializer is done
+    output reg              Ser_done     // when the serializer is done
 );
 
 /*
@@ -24,7 +24,14 @@ reg [$clog2(width):0]   counter;
 
 
 /* if counter equal the number of bits of the input then the serializer is done */
-assign Ser_done = (counter == (width)) ? 1:0; 
+always @(*) begin
+    if(counter == width) begin
+        Ser_done = 1'b1;
+    end
+    else begin
+        Ser_done = 1'b0;
+    end
+end
 
 /*   sequential always to serialize the data   */
 always @(posedge CLK, negedge Reset) begin

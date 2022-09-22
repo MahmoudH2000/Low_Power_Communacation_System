@@ -14,13 +14,12 @@ always @(posedge CLK, negedge Reset) begin
     if (!Reset) begin
         P_Data <= 0;
     end
-    else if(deser_en) begin
-        if (sampled) begin
-            P_Data[7] <= sampled_data;
-
-            for (i = 6; i >= 0; i=i-1) begin // shifting loop
-                P_Data[i] <= P_Data[i+1];
-            end
+    else if(deser_en && sampled) begin
+        
+        P_Data[7] <= sampled_data;
+        
+        for (i = 6; i >= 0; i=i-1) begin // shifting loop
+            P_Data[i] <= P_Data[i+1];
         end
         
     end

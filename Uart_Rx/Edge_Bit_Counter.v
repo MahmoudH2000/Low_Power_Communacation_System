@@ -3,14 +3,14 @@ module Edge_Bit_Counter (
     input                CLK,
     input                Reset,
     input  wire  [4:0]   Prescale,
-    input  wire          EN,   // enale signal
+    input  wire          count_EN,   // enale signal
     output reg   [3:0]   bit_count,
-    output reg   [4:0]   edge_count,
-    output wire          edge_end
+    output reg   [4:0]   edge_count
 );
 
 // internal wire
-reg edge_count_done;
+reg  edge_count_done;
+wire edge_end;
 
 assign edge_end = (edge_count == Prescale);
 
@@ -28,7 +28,7 @@ always @(posedge CLK, negedge Reset) begin
         bit_count  <= 4'b0;
         edge_count <= 5'b1;
     end
-    else if (EN) begin
+    else if (count_EN) begin
         if (edge_count_done) begin
             bit_count  <= bit_count+1;
             edge_count <= 5'b1;

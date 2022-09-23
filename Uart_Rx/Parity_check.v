@@ -2,10 +2,10 @@ module Parity_check (
     // input & output ports
     input  wire       CLK,
     input  wire       Reset,
-    input  wire       Parity_bit,
+    input  wire       Parity_bit,       // parity bit received 
     input  wire [7:0] P_Data,
-    input  wire       Parity_type,
-    input  wire       Parity_check_EN,
+    input  wire       Parity_type,       
+    input  wire       Parity_check_EN,  // enable signal 
     output reg        Parity_error
 );
     
@@ -14,7 +14,7 @@ wire Parity_error_comp;
 
 assign Data_Parity = Parity_type ? (~^P_Data):(^P_Data);
 
-assign Parity_error_comp = (Data_Parity == Parity_bit) ? 1'b0:1'b1;
+assign Parity_error_comp = (Data_Parity == Parity_bit) ? 1'b0:1'b1;  // error if not equal to parity bit
 
 always @(posedge CLK, negedge Reset) begin
     if (!Reset) begin
@@ -22,9 +22,6 @@ always @(posedge CLK, negedge Reset) begin
     end
     else if (Parity_check_EN) begin
         Parity_error <= Parity_error_comp;
-    end
-    else begin
-        Parity_error <= 1'b0;
     end
 end
 

@@ -2,13 +2,13 @@ module Deserializer (
     // input & output ports
     input  wire       CLK,      
     input  wire       Reset,      
-    input  wire       sampled_data, // input from the data sampler
-    input  wire       deser_en,     // enable segnal
-    input  wire       sampled,      //  high for one clock cycle when a bit is sambled
-    output reg  [7:0] P_Data        // output parallel Data
+    input  wire       sampled_data,
+    input  wire       deser_en,
+    input  wire       sampled,
+    output reg  [7:0] P_Data
 );
 
-integer i; // loop integer
+integer i;
 
 always @(posedge CLK, negedge Reset) begin
     if (!Reset) begin

@@ -3,16 +3,16 @@ integer i;
 
 reg          CLK_tb;
 reg          Reset_tb;
-reg          data_high; // signal to show when the data is transmitted (only for testbench)
 reg          S_Data_tb;
 reg          Parity_EN_tb;
 reg          Parity_type_tb;
 reg  [4:0]   Prescale_tb;
 wire         Parity_error_tb;
-wire         stop_error_tb;
 wire         Data_valid_tb;
 wire [7:0]   P_Data_tb;
 
+reg data_high;
+// Design Instaniation
 
 Uart_Rx DUT(
     // input & output ports
@@ -23,7 +23,6 @@ Uart_Rx DUT(
     .Parity_type(Parity_type_tb),
     .Prescale(Prescale_tb),
     .Parity_error(Parity_error_tb),
-    .stop_error(stop_error_tb),
     .Data_valid(Data_valid_tb),
     .P_Data(P_Data_tb)
 );
@@ -42,13 +41,11 @@ Reset_tb = 1'b0;
 #5
 Reset_tb = 1'b1;  
 
-#20 
+#10 
 
-send_data(11'b0_11010101_1_1); // data with no errors
-send_data(11'b0_01010101_1_1); // data with parity error
-send_data(11'b0_11110101_0_1); // data with no errors
-send_data(11'b0_11111111_0_0); // data with stop error
-send_data(11'b0_11010000_1_1); // data with no errors
+send_data(11'b0_11010101_1_1);
+send_data(11'b0_01010101_1_1);
+send_data(11'b0_11110101_0_1);
 #400
 
 $stop ;
@@ -59,15 +56,14 @@ task send_data (
     input  [10:0] data
 );
 begin
-
     for (i = 10; i>=0; i=i-1) begin
     S_Data_tb = data[i];
     data_high = 1;
     #(Prescale_tb*20);
-    end
-
-    data_high = 0;
 end
+data_high = 0;
+end
+
 
 endtask
  

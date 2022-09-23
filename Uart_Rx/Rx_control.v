@@ -2,34 +2,39 @@ module Rx_control (
     // input & output ports
     input  wire        CLK,
     input  wire        Reset,
-    input  wire        S_Data,
-    input  wire  [3:0] bit_count,
-    input  wire        sampled,
+    input  wire        S_Data,        // serial data receiveda
+    input  wire  [3:0] bit_count,     // number of bits received
+    input  wire        sampled,       // high for one clock cycle when a new bit is sampled
     input  wire        Parity_EN,
     input  wire        Parity_error,
     input  wire        start_error,
     input  wire        stop_error,
-    output reg         Parity_check_EN,
-    output reg         start_check_EN,
-    output reg         stop_check_EN,
-    output reg         count_EN,
-    output reg         S_EN,
-    output reg         deser_en,
-    output reg         Data_valid
+    output reg         Parity_check_EN, //enble signal
+    output reg         start_check_EN,  //enble signal
+    output reg         stop_check_EN,   //enble signal
+    output reg         count_EN,        //enble signal
+    output reg         S_EN,            //enble signal
+    output reg         deser_en,        //enble signal
+    output reg         Data_valid       //high for one clock cycle when the data is received correctly
 );
+
+/* this is a finite state machine that has 8 states 
+it's default state is the idle state but when the 
+serial data to be received gets low to starts receiving*/
 
 localparam Idle         = 3'b000;
 localparam Start        = 3'b001;
-localparam Start_check  = 3'b011;
-localparam Send         = 3'b010;
-localparam Parity       = 3'b110;
-localparam Parity_check = 3'b100;
+localparam Start_check  = 3'b011; // check the start bit
+localparam Receive      = 3'b010; 
+localparam Parity       = 3'b110; 
+localparam Parity_check = 3'b100; // check the Parity bit
 localparam Stop         = 3'b101;
-localparam Stop_check   = 3'b111;
+localparam Stop_check   = 3'b111; // check the Stop bit
 
 reg [2:0] next_state;
 reg [2:0] curr_state;
 
+/* state transition always*/
 always @(posedge CLK, negedge Reset) begin
     if (!Reset) begin
         curr_state <= Idle;
@@ -38,7 +43,7 @@ always @(posedge CLK, negedge Reset) begin
         curr_state <= next_state;
     end
 end
-
+/* next state & ouput logic*/
 always @(*) begin
     
     case (curr_state)
@@ -101,7 +106,7 @@ always @(*) begin
                 Data_valid      = 0;
             end
             else if (bit_count == 1) begin
-                next_state      = Send;
+                next_state      = Receive;
                 Parity_check_EN = 0;
                 start_check_EN  = 0; 
                 stop_check_EN   = 0;
@@ -122,7 +127,7 @@ always @(*) begin
             end
         end
 
-        Send: begin
+        Receive: begin
             if (bit_count == 4'b1001) begin
                 if (Parity_EN) begin
                     next_state      = Parity;
@@ -146,7 +151,7 @@ always @(*) begin
                 end
             end
             else begin
-                next_state      = Send;
+                next_state      = Receive;
                 Parity_check_EN = 0;
                 start_check_EN  = 0; 
                 stop_check_EN   = 0;

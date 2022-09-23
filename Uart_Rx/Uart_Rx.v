@@ -7,6 +7,7 @@ module Uart_Rx (
     input  wire        Parity_type,
     input  wire  [4:0] Prescale,
     output wire        Parity_error,
+    output wire        stop_error,
     output wire        Data_valid,
     output wire  [7:0] P_Data
 );
@@ -23,8 +24,8 @@ wire        Sampled_bit;
 wire  [3:0] bit_count;
 wire  [4:0] edge_count;
 wire        start_error;
-wire        stop_error;
 
+/*  Edge Bit Counter instantiation */
 Edge_Bit_Counter Edge_Bit_Counter_top(
     // input & output ports
     .CLK(CLK),
@@ -35,6 +36,7 @@ Edge_Bit_Counter Edge_Bit_Counter_top(
     .edge_count(edge_count)
 );
 
+/*  Data sampler instantiation */
 Data_sampler Data_sampler_top(
     // input & output ports
     .CLK(CLK),
@@ -47,6 +49,7 @@ Data_sampler Data_sampler_top(
     .Sampled_bit(Sampled_bit)
 );
 
+/*  Deserializer instantiation */
 Deserializer Deserializer_top(
     // input & output ports
     .CLK(CLK),    
@@ -57,6 +60,7 @@ Deserializer Deserializer_top(
     .P_Data(P_Data)
 );
 
+/*  Parity bit checkerer instantiation */
 Parity_check Parity_check_top(
     // input & output ports
     .CLK(CLK),
@@ -68,6 +72,7 @@ Parity_check Parity_check_top(
     .Parity_error(Parity_error)
 );
 
+/*  start bit checker instantiation */
 start_check start_check_top(
     // input & output ports
     .CLK(CLK),
@@ -77,6 +82,7 @@ start_check start_check_top(
     .start_error(start_error)
 );
 
+/*  stop bit checker instantiation */
 stop_check stop_check_top(
     // input & output ports
     .CLK(CLK),
@@ -86,6 +92,7 @@ stop_check stop_check_top(
     .stop_error(stop_error)
 );
 
+/*  FSM instantiation */
 Rx_control Rx_control_top(
     // input & output ports
     .CLK(CLK),

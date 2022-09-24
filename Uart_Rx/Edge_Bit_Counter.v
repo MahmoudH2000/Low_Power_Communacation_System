@@ -2,7 +2,7 @@ module Edge_Bit_Counter (
     // input & output ports
     input                CLK,
     input                Reset,
-    input  wire  [4:0]   Prescale,
+    input  wire  [4:0]   Prescale,   // note that it has to be >= 5
     input  wire          count_EN,   // enale signal
     output reg   [3:0]   bit_count,  // nember of bits received
     output reg   [4:0]   edge_count  // number of edges in the received bit

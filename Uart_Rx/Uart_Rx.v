@@ -5,7 +5,7 @@ module Uart_Rx (
     input  wire        S_Data,
     input  wire        Parity_EN,
     input  wire        Parity_type,
-    input  wire  [4:0] Prescale,
+    input  wire  [4:0] Prescale,    // note that it has to be >= 5
     output wire        Parity_error,
     output wire        stop_error,
     output wire        Data_valid,

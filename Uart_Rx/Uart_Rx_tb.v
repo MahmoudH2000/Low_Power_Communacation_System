@@ -41,7 +41,7 @@ Reset_tb = 1'b0;
 #5
 Reset_tb = 1'b1;  
 
-#20 
+#30 
 
 send_data_P(11'b0_11010101_1_1); // data with no errors
 send_data_P(11'b0_01010101_1_1); // data with parity error

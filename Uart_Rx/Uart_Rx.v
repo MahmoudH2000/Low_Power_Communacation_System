@@ -13,7 +13,6 @@ module Uart_Rx (
 );
 
 //  internal signals
-wire        count_EN;
 wire        S_EN;
 wire        deser_en;
 wire        Parity_check_EN;
@@ -31,7 +30,7 @@ Edge_Bit_Counter Edge_Bit_Counter_top(
     .CLK(CLK),
     .Reset(Reset),
     .Prescale(Prescale),
-    .count_EN(count_EN),
+    .count_EN(S_EN),
     .bit_count(bit_count),
     .edge_count(edge_count)
 );
@@ -107,7 +106,6 @@ Rx_control Rx_control_top(
     .Parity_check_EN(Parity_check_EN),
     .start_check_EN(start_check_EN),
     .stop_check_EN(stop_check_EN),
-    .count_EN(count_EN),
     .S_EN(S_EN),
     .deser_en(deser_en),
     .Data_valid(Data_valid)

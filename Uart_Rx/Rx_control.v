@@ -12,7 +12,6 @@ module Rx_control (
     output reg         Parity_check_EN, //enble signal
     output reg         start_check_EN,  //enble signal
     output reg         stop_check_EN,   //enble signal
-    output reg         count_EN,        //enble signal
     output reg         S_EN,            //enble signal
     output reg         deser_en,        //enble signal
     output reg         Data_valid       //high for one clock cycle when the data is received correctly
@@ -54,7 +53,6 @@ always @(*) begin
                 Parity_check_EN = 0;
                 start_check_EN  = 0; 
                 stop_check_EN   = 0;
-                count_EN        = 1;
                 S_EN            = 1; 
                 deser_en        = 0;
                 Data_valid      = 0;
@@ -64,7 +62,6 @@ always @(*) begin
                 Parity_check_EN = 0;
                 start_check_EN  = 0; 
                 stop_check_EN   = 0;
-                count_EN        = 0;
                 S_EN            = 0; 
                 deser_en        = 0;
                 Data_valid      = 0;
@@ -77,7 +74,6 @@ always @(*) begin
                 Parity_check_EN = 0;
                 start_check_EN  = 1; 
                 stop_check_EN   = 0;
-                count_EN        = 1;
                 S_EN            = 1; 
                 deser_en        = 0;
                 Data_valid      = 0;
@@ -87,7 +83,6 @@ always @(*) begin
                 Parity_check_EN = 0;
                 start_check_EN  = 0; 
                 stop_check_EN   = 0;
-                count_EN        = 1;
                 S_EN            = 1; 
                 deser_en        = 0;
                 Data_valid      = 0;
@@ -100,7 +95,6 @@ always @(*) begin
                 Parity_check_EN = 0;
                 start_check_EN  = 0; 
                 stop_check_EN   = 0;
-                count_EN        = 0;
                 S_EN            = 0; 
                 deser_en        = 0;
                 Data_valid      = 0;
@@ -110,7 +104,6 @@ always @(*) begin
                 Parity_check_EN = 0;
                 start_check_EN  = 0; 
                 stop_check_EN   = 0;
-                count_EN        = 1;
                 S_EN            = 1; 
                 deser_en        = 1;
                 Data_valid      = 0;
@@ -120,7 +113,6 @@ always @(*) begin
                 Parity_check_EN = 0;
                 start_check_EN  = 1; 
                 stop_check_EN   = 0;
-                count_EN        = 1;
                 S_EN            = 1; 
                 deser_en        = 0;
                 Data_valid      = 0;
@@ -133,8 +125,7 @@ always @(*) begin
                     next_state      = Parity;
                     Parity_check_EN = 0;
                     start_check_EN  = 0; 
-                    stop_check_EN   = 0;
-                    count_EN        = 1;
+                    stop_check_EN   = 0;  
                     S_EN            = 1; 
                     deser_en        = 0;
                     Data_valid      = 0;
@@ -143,8 +134,7 @@ always @(*) begin
                     next_state      = Stop;
                     Parity_check_EN = 0;
                     start_check_EN  = 0; 
-                    stop_check_EN   = 0;
-                    count_EN        = 1;
+                    stop_check_EN   = 0;   
                     S_EN            = 1; 
                     deser_en        = 0;
                     Data_valid      = 0;
@@ -155,7 +145,6 @@ always @(*) begin
                 Parity_check_EN = 0;
                 start_check_EN  = 0; 
                 stop_check_EN   = 0;
-                count_EN        = 1;
                 S_EN            = 1; 
                 deser_en        = 1;
                 Data_valid      = 0;
@@ -168,7 +157,6 @@ always @(*) begin
                 Parity_check_EN = 1;
                 start_check_EN  = 0; 
                 stop_check_EN   = 0;
-                count_EN        = 1;
                 S_EN            = 1; 
                 deser_en        = 0;
                 Data_valid      = 0;
@@ -178,7 +166,6 @@ always @(*) begin
                 Parity_check_EN = 0;
                 start_check_EN  = 0; 
                 stop_check_EN   = 0;
-                count_EN        = 1;
                 S_EN            = 1; 
                 deser_en        = 0;
                 Data_valid      = 0;
@@ -191,7 +178,6 @@ always @(*) begin
                 Parity_check_EN = 0;
                 start_check_EN  = 0; 
                 stop_check_EN   = 0;
-                count_EN        = 0;
                 S_EN            = 0; 
                 deser_en        = 0;
                 Data_valid      = 0;
@@ -201,7 +187,6 @@ always @(*) begin
                 Parity_check_EN = 0;
                 start_check_EN  = 0; 
                 stop_check_EN   = 0;
-                count_EN        = 1;
                 S_EN            = 1; 
                 deser_en        = 0;
                 Data_valid      = 0;
@@ -211,7 +196,6 @@ always @(*) begin
                 Parity_check_EN = 1;
                 start_check_EN  = 0; 
                 stop_check_EN   = 0;
-                count_EN        = 1;
                 S_EN            = 1; 
                 deser_en        = 0;
                 Data_valid      = 0;
@@ -224,7 +208,6 @@ always @(*) begin
                 Parity_check_EN = 0;
                 start_check_EN  = 0; 
                 stop_check_EN   = 1;
-                count_EN        = 1;
                 S_EN            = 1; 
                 deser_en        = 0;
                 Data_valid      = 0;
@@ -234,7 +217,6 @@ always @(*) begin
                 Parity_check_EN = 0;
                 start_check_EN  = 0; 
                 stop_check_EN   = 0;
-                count_EN        = 1;
                 S_EN            = 1; 
                 deser_en        = 0;
                 Data_valid      = 0;
@@ -247,7 +229,6 @@ always @(*) begin
                 Parity_check_EN = 0;
                 start_check_EN  = 0; 
                 stop_check_EN   = 0;
-                count_EN        = 0;
                 S_EN            = 0; 
                 deser_en        = 0;
                 Data_valid      = 0;
@@ -257,7 +238,6 @@ always @(*) begin
                 Parity_check_EN = 0;
                 start_check_EN  = 0; 
                 stop_check_EN   = 0;
-                count_EN        = 1;
                 S_EN            = 1; 
                 deser_en        = 0;
                 Data_valid      = 1;
@@ -267,7 +247,6 @@ always @(*) begin
                 Parity_check_EN = 0;
                 start_check_EN  = 0; 
                 stop_check_EN   = 0;
-                count_EN        = 0;
                 S_EN            = 0; 
                 deser_en        = 0;
                 Data_valid      = 1;
@@ -279,7 +258,6 @@ always @(*) begin
             Parity_check_EN = 0;
             start_check_EN  = 0; 
             stop_check_EN   = 0;
-            count_EN        = 0;
             S_EN            = 0; 
             deser_en        = 0;
             Data_valid      = 0;

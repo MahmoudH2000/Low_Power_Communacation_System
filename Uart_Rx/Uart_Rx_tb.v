@@ -56,7 +56,9 @@ Parity_type_tb    = 1'b1;
 S_Data_tb = 0;
 #20
 S_Data_tb = 1;
-#40
+#55
+
+#500
 
 // send all ones 
 S_Data_tb = 0;

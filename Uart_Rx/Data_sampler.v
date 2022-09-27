@@ -11,9 +11,9 @@ module Data_sampler (
 );
 
 //internal signals
-wire [4:0] Prescale_shifted;  
+wire [3:0] Prescale_shifted;  
 wire [4:0] Prescale_shifted_plus1;
-wire [4:0] Prescale_shifted_minus1;
+wire [3:0] Prescale_shifted_minus1;
 wire equal_shifted;
 wire equal_shifted_minus1;
 wire sampled_comp;  // high for one clock cycle when a bit is sambled

@@ -10,10 +10,8 @@ module Edge_Bit_Counter (
 );
 
 // internal wire
-wire edge_count_done;
 
 assign Last_edge = (edge_count == Prescale);  
-assign edge_count_done = Last_edge ? 1'b1:1'b0;
 
 always @(posedge CLK, negedge Reset) begin
     if (!Reset) begin
@@ -21,7 +19,7 @@ always @(posedge CLK, negedge Reset) begin
         edge_count <= 5'b1; // starts at 1
     end
     else if (count_EN) begin
-        if (edge_count_done) begin
+        if (Last_edge) begin
             bit_count  <= bit_count+1;  // increment when finished counting the edges of the received bit
             edge_count <= 5'b1;         // restart the edge count
         end

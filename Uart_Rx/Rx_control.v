@@ -1,21 +1,22 @@
-module Rx_control (
+module Rx_control #(parameter width = 8)
+(
     // input & output ports
-    input  wire        CLK,
-    input  wire        Reset,
-    input  wire        S_Data,        // serial data receiveda
-    input  wire  [3:0] bit_count,     // number of bits received
-    input  wire        sampled,       // high for one clock cycle when a new bit is sampled
-    input  wire        Parity_EN,
-    input  wire        Parity_error,
-    input  wire        start_error,
-    input  wire        stop_error,
-    input  wire        Last_edge,       // last edge in the bit
-    output reg         Parity_check_EN, //enble signal
-    output reg         start_check_EN,  //enble signal
-    output reg         stop_check_EN,   //enble signal
-    output reg         S_EN,            //enble signal
-    output reg         deser_en,        //enble signal
-    output reg         Data_valid       //high for one clock cycle when the data is received correctly
+    input  wire                        CLK,
+    input  wire                        Reset,
+    input  wire                        S_Data,        // serial data receiveda
+    input  wire  [$clog2(width+3)-1:0] bit_count,     // number of bits received
+    input  wire                        sampled,       // high for one clock cycle when a new bit is sampled
+    input  wire                        Parity_EN,
+    input  wire                        Parity_error,
+    input  wire                        start_error,
+    input  wire                        stop_error,
+    input  wire                        Last_edge,       // last edge in the bit
+    output reg                         Parity_check_EN, //enble signal
+    output reg                         start_check_EN,  //enble signal
+    output reg                         stop_check_EN,   //enble signal
+    output reg                         S_EN,            //enble signal
+    output reg                         deser_en,        //enble signal
+    output reg                         Data_valid       //high for one clock cycle when the data is received correctly
 );
 
 /* this is a finite state machine that has 6 states 
@@ -106,7 +107,7 @@ always @(*) begin
         end
 
         Receive: begin
-            if (bit_count == 4'b1000 && Last_edge) begin
+            if (bit_count == width && Last_edge) begin
                 if (Parity_EN) begin
                     next_state      = Parity;
                     Parity_check_EN = 0;

@@ -2,6 +2,8 @@ module Uart_Rx_tb ();
 
 integer i;
 
+parameter width = 8;
+
 reg          CLK_tb;
 reg          Reset_tb;
 reg          S_Data_tb;
@@ -13,7 +15,8 @@ wire         stop_error_tb;
 wire         Data_valid_tb;
 wire [7:0]   P_Data_tb;
 
-Uart_Rx DUT(
+Uart_Rx #(.width(width))
+DUT(
     // input & output ports
     .CLK(CLK_tb),
     .Reset(Reset_tb),

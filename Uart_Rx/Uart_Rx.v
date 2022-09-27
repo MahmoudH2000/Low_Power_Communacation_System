@@ -1,32 +1,34 @@
-module Uart_Rx (
+module Uart_Rx #(parameter width = 8)
+(
     // input & output ports
-    input  wire        CLK,
-    input  wire        Reset,
-    input  wire        S_Data,
-    input  wire        Parity_EN,
-    input  wire        Parity_type,
-    input  wire  [4:0] Prescale,    // note that it has to be >= 5
-    output wire        Parity_error,
-    output wire        stop_error,
-    output wire        Data_valid,
-    output wire  [7:0] P_Data
+    input  wire              CLK,
+    input  wire              Reset,
+    input  wire              S_Data,
+    input  wire              Parity_EN,
+    input  wire              Parity_type,
+    input  wire  [4:0]       Prescale,    // note that it has to be >= 5
+    output wire              Parity_error,
+    output wire              stop_error,
+    output wire              Data_valid,
+    output wire  [width-1:0] P_Data
 );
 
 //  internal signals
-wire        S_EN;
-wire        deser_en;
-wire        Parity_check_EN;
-wire        start_check_EN;
-wire        stop_check_EN;
-wire        sampled;
-wire        Sampled_bit;
-wire  [3:0] bit_count;
-wire  [4:0] edge_count;
-wire        start_error;
-wire        Last_edge;
+wire                        S_EN;
+wire                        deser_en;
+wire                        Parity_check_EN;
+wire                        start_check_EN;
+wire                        stop_check_EN;
+wire                        sampled;
+wire                        Sampled_bit;
+wire  [$clog2(width+3)-1:0] bit_count;
+wire  [4:0]                 edge_count;
+wire                        start_error;
+wire                        Last_edge;
 
 /*  Edge Bit Counter instantiation */
-Edge_Bit_Counter Edge_Bit_Counter_top(
+Edge_Bit_Counter  #(.width(width))
+Edge_Bit_Counter_top(
     // input & output ports
     .CLK(CLK),
     .Reset(Reset),
@@ -51,7 +53,8 @@ Data_sampler Data_sampler_top(
 );
 
 /*  Deserializer instantiation */
-Deserializer Deserializer_top(
+Deserializer  #(.width(width))
+Deserializer_top(
     // input & output ports
     .CLK(CLK),    
     .Reset(Reset),  
@@ -62,7 +65,8 @@ Deserializer Deserializer_top(
 );
 
 /*  Parity bit checkerer instantiation */
-Parity_check Parity_check_top(
+Parity_check  #(.width(width))
+Parity_check_top(
     // input & output ports
     .CLK(CLK),
     .Reset(Reset),
@@ -94,7 +98,8 @@ stop_check stop_check_top(
 );
 
 /*  FSM instantiation */
-Rx_control Rx_control_top(
+Rx_control  #(.width(width))
+Rx_control_top(
     // input & output ports
     .CLK(CLK),
     .Reset(Reset),

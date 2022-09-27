@@ -1,12 +1,13 @@
-module Edge_Bit_Counter (
+module Edge_Bit_Counter #(parameter width = 8)
+(
     // input & output ports
-    input                CLK,
-    input                Reset,
-    input  wire  [4:0]   Prescale,   // note that it has to be >= 5
-    input  wire          count_EN,   // enale signal
-    output reg   [3:0]   bit_count,  // nember of bits received
-    output reg   [4:0]   edge_count,  // number of edges in the received bit
-    output wire          Last_edge
+    input                               CLK,
+    input                               Reset,
+    input  wire  [4:0]                  Prescale,   // note that it has to be >= 5
+    input  wire                         count_EN,   // enale signal
+    output wire                         Last_edge,
+    output reg   [$clog2(width+3)-1:0]  bit_count,  // nember of bits received
+    output reg   [4:0]                  edge_count // number of edges in the received bit
 );
 
 // internal wire

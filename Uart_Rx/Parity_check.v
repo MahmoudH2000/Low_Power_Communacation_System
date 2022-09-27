@@ -1,12 +1,13 @@
-module Parity_check (
+module Parity_check #(parameter width = 8)
+(
     // input & output ports
-    input  wire       CLK,
-    input  wire       Reset,
-    input  wire       Parity_bit,       // parity bit received 
-    input  wire [7:0] P_Data,
-    input  wire       Parity_type,       
-    input  wire       Parity_check_EN,  // enable signal 
-    output reg        Parity_error
+    input  wire             CLK,
+    input  wire             Reset,
+    input  wire             Parity_bit,       // parity bit received 
+    input  wire [width-1:0] P_Data,
+    input  wire             Parity_type,       
+    input  wire             Parity_check_EN,  // enable signal 
+    output reg              Parity_error
 );
     
 wire Data_Parity;

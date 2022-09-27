@@ -17,9 +17,6 @@ always @(posedge CLK, negedge Reset) begin
     else if (start_check_EN) begin
         start_error <= start_bit_check;
     end
-    else begin
-        start_error <= 1'b0;
-    end
 end
 
 endmodule

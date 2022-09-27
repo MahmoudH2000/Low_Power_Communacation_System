@@ -23,6 +23,7 @@ wire        Sampled_bit;
 wire  [3:0] bit_count;
 wire  [4:0] edge_count;
 wire        start_error;
+wire        Last_edge;
 
 /*  Edge Bit Counter instantiation */
 Edge_Bit_Counter Edge_Bit_Counter_top(
@@ -32,7 +33,8 @@ Edge_Bit_Counter Edge_Bit_Counter_top(
     .Prescale(Prescale),
     .count_EN(S_EN),
     .bit_count(bit_count),
-    .edge_count(edge_count)
+    .edge_count(edge_count),
+    .Last_edge(Last_edge)
 );
 
 /*  Data sampler instantiation */
@@ -103,6 +105,7 @@ Rx_control Rx_control_top(
     .Parity_error(Parity_error),
     .start_error(start_error),
     .stop_error(stop_error),
+    .Last_edge(Last_edge),
     .Parity_check_EN(Parity_check_EN),
     .start_check_EN(start_check_EN),
     .stop_check_EN(stop_check_EN),

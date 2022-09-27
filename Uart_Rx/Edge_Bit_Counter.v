@@ -5,12 +5,12 @@ module Edge_Bit_Counter (
     input  wire  [4:0]   Prescale,   // note that it has to be >= 5
     input  wire          count_EN,   // enale signal
     output reg   [3:0]   bit_count,  // nember of bits received
-    output reg   [4:0]   edge_count  // number of edges in the received bit
+    output reg   [4:0]   edge_count,  // number of edges in the received bit
+    output wire          Last_edge
 );
 
 // internal wire
 wire edge_count_done;
-wire Last_edge;
 
 assign Last_edge = (edge_count == Prescale);  
 assign edge_count_done = Last_edge ? 1'b1:1'b0;

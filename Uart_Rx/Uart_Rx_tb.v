@@ -43,12 +43,14 @@ Reset_tb = 1'b1;
 
 #30 
 
-send_data_P(11'b0_11010101_1_1); // data with no errors
-send_data_P(11'b0_01010101_1_1); // data with parity error
-send_data_P(11'b0_11110101_0_1); // data with no errors
-send_data_P(11'b0_11111111_0_0); // data with stop error
-send_data_P(11'b0_11010000_1_1); // data with no errors
-#40
+send_data_P(11'b0_01010000_0_1); // send 10  with no errors
+send_data_P(11'b0_00100110_1_1); // send 100 with no errors
+send_data_P(11'b0_01010000_1_1); // send 10  with parity error
+send_data_P(11'b0_00100110_0_1); // send 100 with parity error
+send_data_P(11'b0_01010000_0_0); // send 10  with stop error
+send_data_P(11'b0_00100110_1_0); // send 100 with stop error
+send_data_P(11'b0_01001100_1_1); // send 50  with no errors
+#100
 
 // start glitch
 Parity_type_tb    = 1'b1;
@@ -56,22 +58,21 @@ Parity_type_tb    = 1'b1;
 S_Data_tb = 0;
 #20
 S_Data_tb = 1;
-#55
+#((Prescale_tb-1)*20);
 
-#500
 
 // send all ones 
 S_Data_tb = 0;
 #(Prescale_tb*20);
 S_Data_tb = 1;
-#2000
+#(Prescale_tb*200);
 
-// send data with no parity 
+// send 100 with no parity 
 Parity_EN_tb      = 1'b0;
 Parity_type_tb    = 1'b0;
-send_data_no_P(10'b0_01010101_1);
+send_data_no_P(10'b0_00100110_1);
 
-#2000
+#500
 
 $stop ;
 

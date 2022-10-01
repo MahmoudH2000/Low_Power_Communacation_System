@@ -1,5 +1,8 @@
 Uart_Tx/work/
 Uart_Rx/work/
+Reg_File/work/
+ALU/work/
 transcript
 vsim.wlf
 syn_script.tcl
+cons.tcl

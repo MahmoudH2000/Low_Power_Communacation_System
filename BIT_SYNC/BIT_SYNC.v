@@ -1,4 +1,4 @@
-module Synchronizer #(parameter NUM_Stages = 2, parameter Width = 1) (
+module BIT_SYNC #(parameter NUM_Stages = 2, parameter Width = 1) (
     // input & output ports
     input  wire [Width-1:0] Async_data, 
     input  wire             CLK, 

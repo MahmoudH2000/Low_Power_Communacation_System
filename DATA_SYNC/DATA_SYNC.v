@@ -1,4 +1,4 @@
-module Enable_Sync #(parameter NUM_Stages = 2, parameter Width = 8) (
+module DATA_SYNC #(parameter NUM_Stages = 2, parameter Width = 8) (
     // input & output ports
     input  wire [Width-1:0] Async_bus, 
     input  wire             bus_EN, 

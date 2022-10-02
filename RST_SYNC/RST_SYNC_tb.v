@@ -1,13 +1,13 @@
 `timescale 1ps/1fs
-module RST_sync_tb ();
+module RST_SYNC_tb ();
 
-localparam NUM_Stages_tb = 6;
+localparam NUM_Stages_tb = 2;
 
 reg                 CLK_tb; 
 reg                 Async_Reset_tb;
 wire                sync_Reset_tb;
 
-RST_sync #(.NUM_Stages(NUM_Stages_tb)) DUT(
+RST_SYNC #(.NUM_Stages(NUM_Stages_tb)) DUT(
     // input & output ports
     .CLK(CLK_tb), 
     .Async_Reset(Async_Reset_tb),
@@ -34,7 +34,7 @@ initial begin
     end
 
     #100
-    $finish;
+    $stop;
 
 end
 

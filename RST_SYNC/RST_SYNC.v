@@ -1,4 +1,4 @@
-module RST_sync #(parameter NUM_Stages = 2) (
+module RST_SYNC #(parameter NUM_Stages = 2) (
     // input & output ports
     input  wire             CLK, 
     input  wire             Async_Reset,

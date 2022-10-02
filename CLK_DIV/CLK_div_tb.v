@@ -22,32 +22,32 @@ initial begin
     initialize();
     rst();
     div_tb = 0;
-    #100
+    #1000
     rst();
     div_tb = 1;
-    #100
+    #1000
     rst();
     div_tb = 2;
-    #100
+    #1000
     rst();
     div_tb = 3;
-    #100
+    #1000
     rst();
     div_tb = 4;
-    #100
+    #1000
     rst();
     div_tb = 7;
-    #100
+    #1000
     rst();
     div_tb = 10;
-    #100
+    #1000
     CLK_EN_tb = 0;
-    #100
+    #1000
     CLK_EN_tb = 1;
     rst();
     div_tb = 5;
-    #500
-    $finish;
+    #5000
+    $stop;
 end
 
 

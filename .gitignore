@@ -2,6 +2,13 @@ Uart_Tx/work/
 Uart_Rx/work/
 Reg_File/work/
 ALU/work/
+BIT_SYNC/work/
+CLK_DIV/work/
+CLK_GATE/work/
+DATA_SYNC/work/
+RST_SYNC/work/
+system_control/work/
+
 transcript
 vsim.wlf
 syn_script.tcl

@@ -37,7 +37,7 @@ always @(posedge CLK, negedge Reset) begin
     end
 end
 
-assign MUX_out = Pulse_gen_out ? Async_bus:sync_bus;
 assign Pulse_gen_out = ~Pulse_gen_FF & flops_out[NUM_Stages-1];
+assign MUX_out = Pulse_gen_out ? Async_bus:sync_bus;
     
 endmodule

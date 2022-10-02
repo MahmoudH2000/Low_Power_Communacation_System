@@ -1,5 +1,5 @@
 `timescale 1ps/1fs
-module Enable_Sync_tb ();
+module DATA_SYNC_tb ();
 
 localparam NUM_Stages_tb = 2;
 localparam Width_tb = 8;
@@ -12,7 +12,7 @@ wire  [Width_tb-1:0]  sync_bus_tb;
 wire                  EN_pulse_tb;
 
 
-Enable_Sync #(.NUM_Stages(NUM_Stages_tb), .Width(Width_tb)) DUT(
+DATA_SYNC #(.NUM_Stages(NUM_Stages_tb), .Width(Width_tb)) DUT(
     // input & output ports
     .Async_bus(Async_bus_tb), 
     .bus_EN(bus_EN_tb), 
@@ -45,7 +45,7 @@ initial begin
     end
 
     #100
-    $finish;
+    $stop;
 
 end
 

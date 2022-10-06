@@ -29,7 +29,7 @@ always @(posedge CLK, negedge Reset) begin
             if (i == 2) begin
                 reg_file[i] = 'b001000_01;
             end
-            if (i == 3) begin
+            else if (i == 3) begin
                 reg_file[i] = 'b0000_1000;
             end
             else begin

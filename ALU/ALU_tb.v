@@ -297,7 +297,7 @@ DUT(
         A_tb = 16'b1101010110110101;
         ALU_FUN_tb = 4'd14;
         #7
-        if (ALU_out_tb != 32'b1010101101101010) begin
+        if (ALU_out_tb != 32'b11010101101101010) begin
             $display ("<< test FAILED") ;
         end
         else begin

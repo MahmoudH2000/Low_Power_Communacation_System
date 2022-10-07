@@ -3,7 +3,9 @@
 /* It's configurable to work with slow to fast crossing */
 /*  Or fast to slow crossing using the parameter S_TO_F */
 //------------------------------------------------------//
-module DATA_SYNC #(parameter NUM_Stages = 2, parameter Width = 8, parameter S_TO_F = 1) (
+module DATA_SYNC #(parameter NUM_Stages = 2, 
+                   parameter Width = 8, 
+                   parameter S_TO_F = 1) (
     // input & output ports
     input  wire [Width-1:0] Async_bus, 
     input  wire             bus_EN, 

@@ -17,27 +17,27 @@ module SYS_Control #(
     //---------------------------------------------
     input  wire  [(2*width)-1:0]      ALU_out,
     input  wire                       ALU_out_valid,
-    output reg                        ALU_EN,               
-    output reg   [3:0]                ALU_FUN, 
+    output wire                       ALU_EN,               
+    output wire  [3:0]                ALU_FUN, 
     //---------------------------------------------
     /*       Reg_File inputs & outputs           */
     //---------------------------------------------
     input  wire  [width-1:0]          RdData,
     input  wire                       Rd_valid,
     output wire  [$clog2(depth)-1:0]  Reg_File_Adress,               
-    output reg                        WrEN,               
-    output reg                        RdEN,               
-    output reg   [width-1:0]          WrData,
+    output wire                       WrEN,               
+    output wire                       RdEN,               
+    output wire  [width-1:0]          WrData,
     //---------------------------------------------
     /*     transmitter inputs & outputs          */
     //---------------------------------------------
-    input  wire                        Busy,
-    output reg   [width-1:0]           Tx_Data,
-    output reg                         Tx_Data_valid,
+    input  wire                       Busy,
+    output wire  [width-1:0]          Tx_Data,
+    output wire                       Tx_Data_valid,
     //---------------------------------------------
     /*               CLK_Gate                    */
     //---------------------------------------------   
-    output reg                        CLK_GATE_EN   
+    output wire                       CLK_GATE_EN   
 );
 
 //---------------------------------------------

@@ -1,6 +1,8 @@
 UART/Uart_Tx/work/
 UART/Uart_Rx/work/
 UART/Uart_TOP/work/
+TOP_module/work
+TB/work
 Reg_File/work/
 ALU/work/
 BIT_SYNC/work/

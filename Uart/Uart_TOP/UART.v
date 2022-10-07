@@ -15,17 +15,18 @@ module UART  #(parameter width = 8
     output wire              Parity_error,
     output wire              stop_error,
     //-------------------------------//
-    /*     Rx inputs & outputs       */
+    /*     Tx inputs & outputs       */
     //-------------------------------//
-    input  wire              Tx_valid,    // High for one CLK cycle it tells me that the data is ready
-    input  wire  [7:0]       TX_Data,        
-    output reg               Busy,         // high when the uart is sending (I.e. not Idle)
+    input  wire              Tx_valid,     // High for one CLK cycle it tells me that the data is ready
+    input  wire  [width-1:0] TX_Data,        
+    output wire              Busy,         // high when the uart is sending (I.e. not Idle)
+    output wire              Tx_out,
     //-------------------------------//
     /*        configurations         */
     //-------------------------------//
     input  wire              Parity_EN,
     input  wire              Parity_type,
-    input  wire  [4:0]       Prescale    // note that it has to be >= 5
+    input  wire  [4:0]       Prescale      // note that it has to be >= 5
 );
 
 //---------------------------------------------
@@ -44,4 +45,20 @@ Uart_Rx #(parameter width = 8) Uart_Rx_top
     .Data_valid(Rx_valid),
     .P_Data(Rx_out)
 );
+
+//---------------------------------------------
+/*              Tx instantiation             */
+//---------------------------------------------
+UART_Tx #(parameter width = 8) 
+UART_Tx_top(
+    CLK(Tx_CLK),
+    Reset(Reset),
+    Parity_type(Parity_type),
+    Parity_EN(Parity_EN),   
+    Data_valid(Tx_valid),  
+    Data(TX_Data),        
+    Busy(Busy),       
+    Tx_out(Tx_out)      
+);
+
 endmodule

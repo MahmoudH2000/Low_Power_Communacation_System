@@ -9,8 +9,8 @@ module Uart_Rx #(parameter width = 8)
     input  wire  [4:0]       Prescale,    // note that it has to be >= 5
     output wire              Parity_error,
     output wire              stop_error,
-    output wire              Data_valid,
-    output wire  [width-1:0] P_Data
+    output reg               Data_valid,
+    output reg   [width-1:0] P_Data
 );
 
 //  internal signals
@@ -25,6 +25,22 @@ wire  [$clog2(width+3)-1:0] bit_count;
 wire  [4:0]                 edge_count;
 wire                        start_error;
 wire                        Last_edge;
+wire                        Data_valid_comp;
+wire [width-1:0]            P_Data_comp;
+
+//------------------------------------//
+/*     registering the outputs        */
+//------------------------------------//
+always @(posedge CLK, negedge Reset) begin
+    if (!Reset) begin
+        Data_valid <= 0;
+        P_Data     <= 0;
+    end
+    else begin
+        Data_valid <= Data_valid_comp;
+        P_Data     <= P_Data_comp;
+    end
+end
 
 /*  Edge Bit Counter instantiation */
 Edge_Bit_Counter  #(.width(width))
@@ -61,7 +77,7 @@ Deserializer_top(
     .sampled_data(Sampled_bit),
     .deser_en(deser_en),
     .sampled(sampled),
-    .P_Data(P_Data)
+    .P_Data(P_Data_comp)
 );
 
 /*  Parity bit checkerer instantiation */
@@ -71,7 +87,7 @@ Parity_check_top(
     .CLK(CLK),
     .Reset(Reset),
     .Parity_bit(Sampled_bit),
-    .P_Data(P_Data),
+    .P_Data(P_Data_comp),
     .Parity_type(Parity_type),
     .Parity_check_EN(Parity_check_EN),
     .Parity_error(Parity_error)
@@ -116,7 +132,7 @@ Rx_control_top(
     .stop_check_EN(stop_check_EN),
     .S_EN(S_EN),
     .deser_en(deser_en),
-    .Data_valid(Data_valid)
+    .Data_valid(Data_valid_comp)
 );
 
 endmodule

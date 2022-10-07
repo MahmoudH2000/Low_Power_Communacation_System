@@ -2,8 +2,6 @@ module Rx_Control #(
     parameter width = 8,
     parameter depth = 16
 ) (
-    // input & output ports
-
     //---------------------------------------------
     /*            CLK & Reset                    */
     //---------------------------------------------
@@ -35,6 +33,7 @@ module Rx_Control #(
 //---------------------------------------------
 /*               States                      */
 //--------------------------------------------- 
+
 localparam Idle          = 3'b000;
 localparam WAddr_Receive = 3'b010;
 localparam Data_Receive  = 3'b011;
@@ -320,13 +319,13 @@ always @(*) begin
         end
 
         FUN_Receive: begin
+            CLK_GATE_EN   = 1;
             if (RxValid) begin
                 ALU_EN_comp   = 1;               
                 ALU_F_comp    = Rx_P_Data;               
                 WrEN_comp     = 0;               
                 RdEN_comp     = 0;               
                 WrData_comp   = 0;
-                CLK_GATE_EN   = 1;
             end
             else begin
                 ALU_EN_comp   = 0;               
@@ -334,7 +333,6 @@ always @(*) begin
                 WrEN_comp     = 0;               
                 RdEN_comp     = 0;               
                 WrData_comp   = 0;
-                CLK_GATE_EN   = 0;
             end
         end
         

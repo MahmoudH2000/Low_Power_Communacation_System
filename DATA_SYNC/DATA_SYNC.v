@@ -1,6 +1,6 @@
 //------------------------------------------------------//
 /*   This module is an enable based data synchronizer   */
-/* It's configarable to work with slow to fast crossing */
+/* It's configurable to work with slow to fast crossing */
 /*  Or fast to slow crossing using the parameter S_TO_F */
 //------------------------------------------------------//
 module DATA_SYNC #(parameter NUM_Stages = 2, parameter Width = 8, parameter S_TO_F = 1) (

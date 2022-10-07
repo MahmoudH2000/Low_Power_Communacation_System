@@ -12,7 +12,8 @@ wire           Busy_tb;
 wire           Tx_out_tb;
 
 /* UART_Tx instantiation */
-UART_Tx DUT(
+UART_Tx #(.width(8))
+DUT(
     //input & output ports
     .CLK(CLK_tb),
     .Reset(Reset_tb),

@@ -1,5 +1,5 @@
-Uart_Tx/work/
-Uart_Rx/work/
+UART/Uart_Tx/work/
+UART/Uart_Rx/work/
 Reg_File/work/
 ALU/work/
 BIT_SYNC/work/

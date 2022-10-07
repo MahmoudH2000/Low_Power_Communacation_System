@@ -43,7 +43,7 @@ module SYS_Control #(
 //---------------------------------------------
 /*          Tx_Control instantiation         */
 //---------------------------------------------
-Tx_Control #(.width(width)) Tx_Control_top (
+SYS_CNTR_Tx #(.width(width)) Tx_Control_top (
     .CLK(CLK),       
     .Reset(Reset),
     .RdData(RdData),
@@ -59,7 +59,7 @@ Tx_Control #(.width(width)) Tx_Control_top (
 //---------------------------------------------
 /*          Rx_Control instantiation         */
 //---------------------------------------------
-Rx_Control #(.width(width), .depth(depth)) 
+SYS_CNTR_Rx #(.width(width), .depth(depth)) 
 Rx_Control_top(
     .CLK(CLK),       
     .Reset(Reset),

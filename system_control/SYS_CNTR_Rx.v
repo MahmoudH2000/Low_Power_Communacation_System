@@ -1,4 +1,4 @@
-module Rx_Control #(
+module SYS_CNTR_Rx #(
     parameter width = 8,
     parameter depth = 16
 ) (

@@ -1,4 +1,4 @@
-module Tx_Control #(
+module SYS_CNTR_Tx #(
     parameter width = 8
 ) (
     //---------------------------------------------
@@ -63,13 +63,25 @@ end
 /*          Registring the outputs           */
 //---------------------------------------------
 always @(posedge CLK, negedge Reset) begin
+
+    //--------------------------------------------------------//
+    /* this a toggel flip flop for the Ffast to slow crossing */
+    //--------------------------------------------------------//
+    if (!Reset) begin
+        Tx_Data_valid <= 0;
+    end
+    else if (Tx_valid_comp)  begin
+        Tx_Data_valid <= !Tx_Data_valid;  
+    end
+    
+end
+
+always @(posedge CLK, negedge Reset) begin
     if (!Reset) begin
         Tx_Data       <= 0;
-        Tx_Data_valid <= 0;
     end
     else  begin
         Tx_Data       <= Tx_Data_comp;
-        Tx_Data_valid <= Tx_valid_comp;
     end
 end
 

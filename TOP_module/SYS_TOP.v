@@ -40,8 +40,12 @@ wire [width-1:0]          REG0;
 wire [width-1:0]          REG1;
 wire [width-1:0]          REG2;
 wire [width-1:0]          REG3;
+wire                      can_send;
+wire                      can_send_sync;
 
-
+//---------------------------------------------
+/*       SYSTEM Control instantiation        */
+//---------------------------------------------
 SYS_Control #(
     .width(width),
     .depth(depth)
@@ -63,15 +67,22 @@ SYS_Control #(
     .Busy(Busy_sync),
     .Tx_Data(Tx_Data_REF),
     .Tx_Data_valid(Tx_valid_REF),   
-    .CLK_GATE_EN(CLK_GATE_EN)   
+    .CLK_GATE_EN(CLK_GATE_EN),
+    .can_send(can_send_sync)  
 );
 
+//---------------------------------------------
+/*          CLOCK GATE instantiation         */
+//---------------------------------------------
 CLK_GATE CLK_GATE_top(
     .CLK_EN(CLK_GATE_EN),
     .CLK(REF_CLK),
     .GATED_CLK(Gated_CLK)
 );
 
+//---------------------------------------------
+/*        REF_RST sync instantiation         */
+//---------------------------------------------
 RST_SYNC #(.NUM_Stages(2)) 
 RST_SYNC_REF(
     .CLK(REF_CLK), 
@@ -79,6 +90,9 @@ RST_SYNC_REF(
     .sync_Reset(REF_RST)
 );
 
+//---------------------------------------------
+/*        UART_RST sync instantiation        */
+//---------------------------------------------
 RST_SYNC #(.NUM_Stages(2)) 
 RST_SYNC_UART(
     .CLK(UART_CLK), 
@@ -86,6 +100,9 @@ RST_SYNC_UART(
     .sync_Reset(Uart_RST)
 );
 
+//---------------------------------------------
+/*         CLOCK divider instantiation       */
+//---------------------------------------------
 CLK_div CLK_div_top(
     .CLK_Ref(UART_CLK),
     .Reset(Uart_RST),
@@ -94,6 +111,9 @@ CLK_div CLK_div_top(
     .CLK_div_out(Tx_CLK)
 );
 
+//---------------------------------------------
+/*         Register File instantiation       */
+//---------------------------------------------
 RegFile #(.width(width), .depth(depth))
 RegFile_top(
     .CLK(REF_CLK),
@@ -110,6 +130,9 @@ RegFile_top(
     .Rd_valid(Rd_valid)
 );
 
+//---------------------------------------------
+/*              ALU instantiation            */
+//---------------------------------------------
 ALU #(.A_width(width),
       .B_width(width),
       .OUT_width(width*2)
@@ -124,15 +147,33 @@ ALU #(.A_width(width),
     .Out_valid(ALU_out_valid)
 );
 
+//---------------------------------------------
+/*        can_send bit sync instantiation    */
+//---------------------------------------------
 BIT_SYNC #(.NUM_Stages(2), 
            .Width(1)
-) BIT_SYNC_top (
+) BIT_SYNC_CanSend (
+    .Async_data(can_send), 
+    .CLK(REF_CLK), 
+    .Reset(REF_RST),
+    .sync_data(can_send_sync)
+);
+
+//---------------------------------------------
+/*          Busy bit sync instantiation      */
+//---------------------------------------------
+BIT_SYNC #(.NUM_Stages(2), 
+           .Width(1)
+) BIT_SYNC_Busy (
     .Async_data(Busy), 
     .CLK(REF_CLK), 
     .Reset(REF_RST),
     .sync_data(Busy_sync)
 );
 
+//---------------------------------------------
+/*             Tx sync instantiation         */
+//---------------------------------------------
 DATA_SYNC #(.NUM_Stages(2), 
             .Width(8), 
             .S_TO_F(0)
@@ -145,6 +186,9 @@ DATA_SYNC #(.NUM_Stages(2),
     .EN_pulse(Tx_valid)
 );
 
+//---------------------------------------------
+/*             Rx sync instantiation         */
+//---------------------------------------------
 DATA_SYNC #(.NUM_Stages(2), 
             .Width(8), 
             .S_TO_F(1)
@@ -157,6 +201,9 @@ DATA_SYNC #(.NUM_Stages(2),
     .EN_pulse(RxValid_sync)
 );
 
+//---------------------------------------------
+/*               UART instantiation          */
+//---------------------------------------------
 UART  #(.width(width)
 ) UART_top(
     .Tx_CLK(Tx_CLK),
@@ -173,7 +220,8 @@ UART  #(.width(width)
     .Tx_out(Tx_out),
     .Parity_EN(REG2[0]),
     .Parity_type(REG2[1]),
-    .Prescale(REG2[6:2])    
+    .Prescale(REG2[6:2]),
+    .can_send(can_send)    
 );
     
 endmodule

@@ -8,7 +8,8 @@ module Tx_Control (
     output reg        Ser_EN,         // to tell the serializer to start working
     output reg        Busy,           // high when the uart is sending (I.e. not Idle)   
     output reg  [1:0] Mux_control,   
-    output reg        valid_instop    // if the data_valid is high during the stop state it gets high to make it send data
+    output reg        valid_instop,   // if the data_valid is high during the stop state it gets high to make it send data
+    output reg        can_send        // an output to tell the master that you can send again     
 );
 
 /*
@@ -44,6 +45,7 @@ end
 
 /*  next state and output logic */
 always @(*) begin
+    can_send = 0;
     case (curr_state)
 
         Idle: begin
@@ -70,13 +72,16 @@ always @(*) begin
 
         Send: begin
             if (!Ser_done) begin
+                can_send     = 0;
                 next_state  = Send; 
             end
             else begin
                 if (Parity_EN) begin
+                    can_send     = 1;
                     next_state  = Parity;
                 end
                 else begin
+                    can_send     = 1;
                     next_state  = Stop;
                 end
             end
@@ -114,6 +119,7 @@ always @(*) begin
             Busy        = 1'b0;
             Ser_EN      = 1'b0;
             valid_instop = 0;
+            can_send     =0;
         end 
     endcase
 end

@@ -32,6 +32,7 @@ module SYS_Control #(
     /*     transmitter inputs & outputs          */
     //---------------------------------------------
     input  wire                       Busy,
+    input  wire                       can_send, // to tell the controller you can send
     output wire  [width-1:0]          Tx_Data,
     output wire                       Tx_Data_valid,
     //---------------------------------------------
@@ -52,6 +53,7 @@ SYS_CNTR_Tx #(.width(width)) Tx_Control_top (
     .ALU_out_valid(ALU_out_valid),
     .ALU_FUN(ALU_FUN),
     .Busy(Busy),
+    .can_send(can_send),
     .Tx_Data(Tx_Data),
     .Tx_Data_valid(Tx_Data_valid)
 );

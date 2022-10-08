@@ -7,7 +7,8 @@ module UART_Tx #(parameter width = 8) (
     input  wire              Data_valid,  // High for one CLK cycle it tells me that the data is ready
     input  wire  [width-1:0] Data,        
     output reg               Busy,        // high when the uart is sending (I.e. not Idle)
-    output reg               Tx_out       // data sent
+    output reg               Tx_out,       // data sent
+    output wire              can_send
 );
 
 /*
@@ -66,7 +67,8 @@ Tx_Control Tx_Control_top(
     .Ser_EN(Ser_EN),
     .Mux_control(Mux_control),
     .Busy(Busy_comp),
-    .valid_instop(valid_instop)
+    .valid_instop(valid_instop),
+    .can_send(can_send)
 );
 
 /* serializer instantiation */

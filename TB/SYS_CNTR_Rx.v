@@ -41,12 +41,15 @@ localparam RAddr_Receive = 3'b001;
 localparam A_Receive     = 3'b100;
 localparam B_Receive     = 3'b101;
 localparam FUN_Receive   = 3'b111;
+localparam wait_s        = 3'b110; 
+/* the wais state is to make the CLK gate cell run 
+for one more cycle to let the ALU capture the result */
 
 reg [2:0] curr_state;
 reg [2:0] next_state;
 
 //---------------------------------------------
-/*          internal signals               */
+/*          internal signals                 */
 //---------------------------------------------
 
 reg                     Add_R_E;       // high when the addres is read
@@ -58,6 +61,23 @@ reg                     ALU_EN_comp;
 reg [3:0]               ALU_F_comp;
 reg                     WrEN_comp;
 reg [width-1:0]         WrData_comp;
+reg                     wait_counter;  // counter for the wait state 
+reg                     waitcount;     // make high when we want to count
+
+//---------------------------------------------
+/*          counter for the wait state       */
+//---------------------------------------------
+always @(posedge CLK, negedge Reset) begin
+    if (!Reset) begin
+        wait_counter <= 0;
+    end
+    else if(waitcount) begin
+        wait_counter <= wait_counter+1;
+    end
+    else begin
+        wait_counter <= 0;
+    end
+end
 
 //---------------------------------------------
 /*          curr states always               */
@@ -143,10 +163,19 @@ always @(*) begin
 
         FUN_Receive: begin
             if (RxValid) begin
-                next_state = Idle;
+                next_state = wait_s;
             end
             else begin
                 next_state = FUN_Receive;
+            end
+        end
+
+        wait_s: begin
+            if (wait_counter == 1) begin
+                next_state = Idle;
+            end
+            else begin
+                next_state = wait_s;
             end
         end
         
@@ -157,6 +186,9 @@ end
 //---------------------------------------------
 /*     outputs calculations always           */
 //--------------------------------------------- 
+
+assign Reg_File_Adress = (curr_state==Data_Receive || curr_state==Idle) ? WAdress : op_add;
+
 always @(posedge CLK, negedge Reset) begin
     if (!Reset) begin
         ALU_EN  <= 0;
@@ -196,12 +228,11 @@ always @(posedge CLK, negedge Reset) begin
     end
 end
 
-assign Reg_File_Adress = (curr_state==Data_Receive || curr_state==Idle) ? WAdress : op_add;
-
 always @(*) begin
     
-    Add_R_E        = 0;
-    op_add_comp    = 0;
+    Add_R_E     = 0;
+    op_add_comp = 0;
+    waitcount   = 0;
     
     case (curr_state)
         Idle: begin
@@ -334,6 +365,16 @@ always @(*) begin
                 RdEN_comp     = 0;               
                 WrData_comp   = 0;
             end
+        end
+
+        wait_s: begin
+            waitcount   = 1;
+            CLK_GATE_EN = 1;
+            ALU_EN_comp = 0;               
+            ALU_F_comp  = 0;               
+            WrEN_comp   = 0;               
+            RdEN_comp   = 0;               
+            WrData_comp = 0;
         end
         
         default: begin

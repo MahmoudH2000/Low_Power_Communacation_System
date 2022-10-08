@@ -21,6 +21,7 @@ module SYS_CNTR_Tx #(
     /*          transmitter outputs               */
     //---------------------------------------------
     input  wire                        Busy,
+    input  wire                        can_send, // to tell the controller you can send
     //---------------------------------------------
     /*          transmitter inputs               */
     //---------------------------------------------
@@ -40,24 +41,64 @@ reg [1:0] curr_state;
 reg [1:0] next_state;
 
 //---------------------------------------------
-/*          internal signals               */
+/*          internal signals                 */
 //---------------------------------------------
 
-reg [width-1:0]  ALU_out_M; // most significant bits
-reg              Tx_valid_comp;
-reg [width-1:0]  Tx_Data_comp;
+wire                 is_Arith;   // high if we are making an arithmatic op
+reg [(2*width)-1:0]  ALU_out_M;   
+reg                  Tx_valid_comp;
+reg [width-1:0]      Tx_Data_comp;
+reg [3:0]            ALU_FUN_IN; // register the FUN
+reg                  ALU_Arith;  // register is_Arith
+reg                  ALU_send;   // high if we are sending ALU output
+reg                  Reg_send;   // high if we are sending Reg_File output
 
 //---------------------------------------------
-/*          Registring the Data              */
+/*      Data Registring and calculations     */
 //---------------------------------------------
+
+always @(posedge CLK, negedge Reset) begin
+    if (!Reset) begin
+        ALU_FUN_IN <= 0;
+    end
+    else begin
+        ALU_FUN_IN <= ALU_FUN;
+    end
+end
+
 always @(posedge CLK, negedge Reset) begin
     if (!Reset) begin
         ALU_out_M <= 0;
     end
-    else if (ALU_out_valid && !ALU_FUN[3] && !ALU_FUN[2]) begin
-        ALU_out_M <= ALU_out[(2*width)-1:width];
+    else if (ALU_out_valid) begin
+        ALU_out_M <= ALU_out;
     end
 end
+
+always @(posedge CLK, negedge Reset) begin
+    if (!Reset) begin
+        ALU_send  <= 0;
+        Reg_send  <= 0;
+        ALU_Arith <= 0;
+    end
+    else if (ALU_out_valid && !Busy) begin
+        ALU_send  <= 1;
+        Reg_send  <= 0;
+        if (is_Arith) begin
+            ALU_Arith <= 1;
+        end
+        else begin
+            ALU_Arith <= 0;
+        end
+    end
+    else if (Rd_valid && !Busy) begin
+        ALU_send  <= 0;
+        Reg_send  <= 1;
+        ALU_Arith <= 0;
+    end
+end
+
+assign is_Arith = !ALU_FUN_IN[3] && !ALU_FUN_IN[2];
 
 //---------------------------------------------
 /*          Registring the outputs           */
@@ -78,10 +119,10 @@ end
 
 always @(posedge CLK, negedge Reset) begin
     if (!Reset) begin
-        Tx_Data       <= 0;
+        Tx_Data <= 0;
     end
     else  begin
-        Tx_Data       <= Tx_Data_comp;
+        Tx_Data <= Tx_Data_comp;
     end
 end
 
@@ -107,12 +148,15 @@ always @(*) begin
     case (curr_state)
         Idle: begin
             if (Rd_valid && !Busy) begin
+
                 next_state    = Idle;
                 Tx_valid_comp = 1;
                 Tx_Data_comp  = RdData;
+
             end
             else if (ALU_out_valid && !Busy) begin
-                if (!ALU_FUN[3] && !ALU_FUN[2]) begin
+
+                if (is_Arith) begin
                     next_state = wait_s;
                 end
                 else begin
@@ -120,35 +164,55 @@ always @(*) begin
                 end
                 Tx_valid_comp = 1;
                 Tx_Data_comp  = ALU_out[width-1:0];
+
             end
             else begin
+
                 next_state    = Idle;
                 Tx_valid_comp = 0;
-                Tx_Data_comp  = 0;
+                case ({ALU_send,Reg_send})
+                    2'b01:  Tx_Data_comp  = RdData;
+                    2'b10: begin
+                        if (ALU_Arith) begin
+                            Tx_Data_comp = ALU_out_M[(2*width)-1:width];
+                        end
+                        else begin
+                            Tx_Data_comp = ALU_out_M[width-1:0];
+                        end
+                    end  
+                    default: Tx_Data_comp = 0;
+                endcase
+                
             end
         end 
 
         wait_s: begin
             next_state    = AlU_trans;
             Tx_valid_comp = 0;
-            Tx_Data_comp  = ALU_out_M;
+            Tx_Data_comp  = ALU_out_M[width-1:0];
         end
 
         AlU_trans: begin
-            if (!Busy) begin
+            if (can_send) begin
                 next_state    = Idle;
                 Tx_valid_comp = 1;
-                Tx_Data_comp  = ALU_out_M;
+                Tx_Data_comp  = ALU_out_M[(2*width)-1:width];
             end
             else begin
                 next_state    = AlU_trans;
                 Tx_valid_comp = 0;
-                Tx_Data_comp  = 0;
+                Tx_Data_comp  = ALU_out_M[width-1:0];
             end
         end
 
         default: begin
-            next_state = Idle;
+            next_state    = Idle;
+            Tx_Data_comp  = 0;
+            case ({ALU_send,Reg_send})
+                    2'b01:  Tx_Data_comp  = RdData;
+                    2'b10:  Tx_Data_comp  = ALU_out_M[(2*width)-1:width];
+                    default: Tx_Data_comp = 0;
+            endcase
         end
         
     endcase

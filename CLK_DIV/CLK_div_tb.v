@@ -4,7 +4,7 @@ module CLK_div_tb ();
 reg           CLK_Ref_tb;
 reg           Reset_tb;
 reg           CLK_EN_tb;
-reg   [4:0]   div_tb;
+reg   [3:0]   div_tb;
 wire          CLK_div_out_tb;
 
 always #5 CLK_Ref_tb = ~CLK_Ref_tb;

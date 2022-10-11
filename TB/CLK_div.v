@@ -3,31 +3,30 @@ module CLK_div (
     input   wire        CLK_Ref,
     input   wire        Reset,
     input   wire        CLK_EN,
-    input   wire [4:0]  div,
+    input   wire [3:0]  div,
     output  reg         CLK_div_out
 );
 
 reg         CLK_div;
 reg         flag;
-reg  [3:0]  counter;
-wire [3:0]  div_ratio;
+reg  [2:0]  counter;
+wire [2:0]  div_ratio;
 wire        Is_Odd;
 wire        shift_even;
 wire        shift_odd;
-reg         EN;
+wire        EN;
 
 assign div_ratio  = div >> 1'b1;
 assign Is_Odd     = div[0];
 assign shift_even = counter == (div_ratio-1'b1);
 assign shift_odd  = counter == div_ratio;
 
+assign EN = CLK_EN && (div != 4'b1) && (div != 4'b0);
 
 always @(posedge CLK_Ref, negedge Reset) begin
     
-    EN <= CLK_EN && div != 5'b1 && div != 5'b0;
-    
     if (!Reset) begin
-        counter <= 4'b0;
+        counter <= 3'b0;
         flag    <= 1'b0;
         CLK_div <= 1'b0;
     end    

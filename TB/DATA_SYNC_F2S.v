@@ -1,11 +1,6 @@
-//------------------------------------------------------//
-/*   This module is an enable based data synchronizer   */
-/* It's configurable to work with slow to fast crossing */
-/*  Or fast to slow crossing using the parameter S_TO_F */
-//------------------------------------------------------//
-module DATA_SYNC #(parameter NUM_Stages = 2, 
-                   parameter Width = 8, 
-                   parameter S_TO_F = 1) (
+
+module DATA_SYNC_F2S #(parameter NUM_Stages = 2, 
+                   parameter Width = 8) (
     // input & output ports
     input  wire [Width-1:0] Async_bus, 
     input  wire             bus_EN, 
@@ -44,15 +39,7 @@ always @(posedge CLK, negedge Reset) begin
     end
 end
 
-generate
-    if (S_TO_F) begin : Slow_TO_Fast
-        assign Pulse_gen_out = ~Pulse_gen_FF & flops_out[NUM_Stages-1];
-    end
-    else begin : Fast_TO_Slow
-        assign Pulse_gen_out = Pulse_gen_FF ^ flops_out[NUM_Stages-1];
-    end
-endgenerate
-
+assign Pulse_gen_out = Pulse_gen_FF ^ flops_out[NUM_Stages-1];
 assign MUX_out = Pulse_gen_out ? Async_bus:sync_bus;
     
 endmodule

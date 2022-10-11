@@ -174,9 +174,8 @@ BIT_SYNC #(.NUM_Stages(2),
 //---------------------------------------------
 /*             Tx sync instantiation         */
 //---------------------------------------------
-DATA_SYNC #(.NUM_Stages(2), 
-            .Width(8), 
-            .S_TO_F(0)
+DATA_SYNC_F2S #(.NUM_Stages(2), 
+            .Width(width)
 ) DATA_SYNC_Tx (
     .Async_bus(Tx_Data_REF), 
     .bus_EN(Tx_valid_REF), 
@@ -189,9 +188,8 @@ DATA_SYNC #(.NUM_Stages(2),
 //---------------------------------------------
 /*             Rx sync instantiation         */
 //---------------------------------------------
-DATA_SYNC #(.NUM_Stages(2), 
-            .Width(8), 
-            .S_TO_F(1)
+DATA_SYNC_S2F #(.NUM_Stages(2), 
+            .Width(width)
 ) DATA_SYNC_Rx (
     .Async_bus(Rx_out), 
     .bus_EN(RxValid), 

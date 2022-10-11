@@ -21,7 +21,7 @@ module SYS_CNTR_Tx #(
     /*          transmitter outputs               */
     //---------------------------------------------
     input  wire                        Busy,
-    input  wire                        can_send, // to tell the controller you can send
+    input  wire                        Ser_done, // to tell the controller you can send
     //---------------------------------------------
     /*          transmitter inputs               */
     //---------------------------------------------
@@ -174,7 +174,7 @@ always @(*) begin
         end
 
         AlU_trans: begin
-            if (can_send) begin
+            if (Ser_done) begin
                 next_state    = Idle;
                 Tx_valid_comp = 1;
                 Tx_Data_comp  = ALU_out_M[(2*width)-1:width];

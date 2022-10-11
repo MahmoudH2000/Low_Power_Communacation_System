@@ -21,7 +21,7 @@ module UART  #(parameter width = 8
     input  wire  [width-1:0] TX_Data,        
     output wire              Busy,         // high when the uart is sending (I.e. not Idle)
     output wire              Tx_out,
-    output wire              can_send,
+    output wire              Ser_done,
     //-------------------------------//
     /*        configurations         */
     //-------------------------------//
@@ -60,7 +60,7 @@ UART_Tx_top(
     .Data(TX_Data),        
     .Busy(Busy),       
     .Tx_out(Tx_out),
-    .can_send(can_send)    
+    .Ser_done(Ser_done)    
 );
 
 endmodule

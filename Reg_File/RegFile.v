@@ -27,10 +27,10 @@ always @(posedge CLK, negedge Reset) begin
 
         for (i = 0; i<depth; i=i+1) begin
             if (i == 2) begin
-                reg_file[i] = 'b0_01000_0_1; // floating _ prescale _ Paritytype _ parityEnable
+                reg_file[i] <= 'b001000_01;
             end
             else if (i == 3) begin
-                reg_file[i] = 'b000_01000;   // floating _ div ratio
+                reg_file[i] <= 'b0000_1000;
             end
             else begin
                 reg_file[i] <= 16'b0;    

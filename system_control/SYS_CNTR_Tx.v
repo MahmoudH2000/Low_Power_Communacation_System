@@ -48,23 +48,12 @@ wire                 is_Arith;   // high if we are making an arithmatic op
 reg [(2*width)-1:0]  ALU_out_M;   
 reg                  Tx_valid_comp;
 reg [width-1:0]      Tx_Data_comp;
-reg [3:0]            ALU_FUN_IN; // register the FUN
-reg                  ALU_Arith;  // register is_Arith
 reg                  ALU_send;   // high if we are sending ALU output
 reg                  Reg_send;   // high if we are sending Reg_File output
 
 //---------------------------------------------
 /*      Data Registring and calculations     */
 //---------------------------------------------
-
-always @(posedge CLK, negedge Reset) begin
-    if (!Reset) begin
-        ALU_FUN_IN <= 0;
-    end
-    else begin
-        ALU_FUN_IN <= ALU_FUN;
-    end
-end
 
 always @(posedge CLK, negedge Reset) begin
     if (!Reset) begin
@@ -79,26 +68,18 @@ always @(posedge CLK, negedge Reset) begin
     if (!Reset) begin
         ALU_send  <= 0;
         Reg_send  <= 0;
-        ALU_Arith <= 0;
     end
     else if (ALU_out_valid && !Busy) begin
         ALU_send  <= 1;
         Reg_send  <= 0;
-        if (is_Arith) begin
-            ALU_Arith <= 1;
-        end
-        else begin
-            ALU_Arith <= 0;
-        end
     end
     else if (Rd_valid && !Busy) begin
         ALU_send  <= 0;
         Reg_send  <= 1;
-        ALU_Arith <= 0;
     end
 end
 
-assign is_Arith = !ALU_FUN_IN[3] && !ALU_FUN_IN[2];
+assign is_Arith = !ALU_FUN[3] && !ALU_FUN[2];
 
 //---------------------------------------------
 /*          Registring the outputs           */
@@ -173,7 +154,7 @@ always @(*) begin
                 case ({ALU_send,Reg_send})
                     2'b01:  Tx_Data_comp  = RdData;
                     2'b10: begin
-                        if (ALU_Arith) begin
+                        if (is_Arith) begin
                             Tx_Data_comp = ALU_out_M[(2*width)-1:width];
                         end
                         else begin
@@ -207,11 +188,18 @@ always @(*) begin
 
         default: begin
             next_state    = Idle;
-            Tx_Data_comp  = 0;
+            Tx_valid_comp = 0;
             case ({ALU_send,Reg_send})
-                    2'b01:  Tx_Data_comp  = RdData;
-                    2'b10:  Tx_Data_comp  = ALU_out_M[(2*width)-1:width];
-                    default: Tx_Data_comp = 0;
+                2'b01:  Tx_Data_comp  = RdData;
+                2'b10: begin
+                    if (is_Arith) begin
+                        Tx_Data_comp = ALU_out_M[(2*width)-1:width];
+                    end
+                    else begin
+                        Tx_Data_comp = ALU_out_M[width-1:0];
+                    end
+                end  
+                default: Tx_Data_comp = 0;
             endcase
         end
         

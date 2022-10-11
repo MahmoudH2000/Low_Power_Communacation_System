@@ -58,7 +58,7 @@ reg [$clog2(depth)-1:0] WAdress;       // adress to write in data
 reg [$clog2(depth)-1:0] op_add;        // adress to write the operands 
 reg [$clog2(depth)-1:0] op_add_comp;   
 reg                     ALU_EN_comp;
-reg [3:0]               ALU_F_comp;
+reg                     ALU_F_en;
 reg                     WrEN_comp;
 reg [width-1:0]         WrData_comp;
 reg                     wait_counter;  // counter for the wait state 
@@ -192,7 +192,6 @@ assign Reg_File_Adress = (curr_state==Data_Receive || curr_state==Idle) ? WAdres
 always @(posedge CLK, negedge Reset) begin
     if (!Reset) begin
         ALU_EN  <= 0;
-        ALU_FUN <= 0;
         WrEN    <= 0;
         WrData  <= 0;
         op_add  <= 0;
@@ -200,7 +199,6 @@ always @(posedge CLK, negedge Reset) begin
     end
     else begin 
         ALU_EN  <= ALU_EN_comp;
-        ALU_FUN <= ALU_F_comp;
         WrEN    <= WrEN_comp;
         WrData  <= WrData_comp;
         op_add  <= op_add_comp;
@@ -228,6 +226,15 @@ always @(posedge CLK, negedge Reset) begin
     end
 end
 
+always @(posedge CLK, negedge Reset) begin
+    if (!Reset) begin
+        ALU_FUN <= 0;
+    end
+    else if (ALU_F_en) begin
+        ALU_FUN <= Rx_P_Data;
+    end
+end
+
 always @(*) begin
     
     Add_R_E     = 0;
@@ -237,7 +244,7 @@ always @(*) begin
     case (curr_state)
         Idle: begin
             ALU_EN_comp  = 0;               
-            ALU_F_comp   = 0; 
+            ALU_F_en     = 0; 
             WrEN_comp    = 0;               
             RdEN_comp    = 0;               
             WrData_comp  = 0;
@@ -248,7 +255,7 @@ always @(*) begin
         WAddr_Receive: begin
             if (RxValid) begin
                 ALU_EN_comp = 0;               
-                ALU_F_comp  = 0; 
+                ALU_F_en    = 0; 
                 Add_R_E     = 1;              
                 WrEN_comp   = 0;               
                 RdEN_comp   = 0;               
@@ -257,7 +264,7 @@ always @(*) begin
             end
             else begin
                 ALU_EN_comp = 0;               
-                ALU_F_comp  = 0; 
+                ALU_F_en    = 0; 
                 Add_R_E     = 0;               
                 WrEN_comp   = 0;               
                 RdEN_comp   = 0;               
@@ -269,7 +276,7 @@ always @(*) begin
         Data_Receive: begin
             if (RxValid) begin
                 ALU_EN_comp = 0;               
-                ALU_F_comp  = 0;               
+                ALU_F_en    = 0;               
                 WrEN_comp   = 1;               
                 RdEN_comp   = 0;               
                 WrData_comp = Rx_P_Data;
@@ -277,7 +284,7 @@ always @(*) begin
             end
             else begin
                 ALU_EN_comp = 0;               
-                ALU_F_comp  = 0;               
+                ALU_F_en    = 0;               
                 WrEN_comp   = 0;               
                 RdEN_comp   = 0;               
                 WrData_comp = 0;
@@ -289,7 +296,7 @@ always @(*) begin
         RAddr_Receive: begin
             if (RxValid) begin
                 ALU_EN_comp    = 0;               
-                ALU_F_comp     = 0; 
+                ALU_F_en       = 0; 
                 Add_R_E        = 1;               
                 WrEN_comp      = 0;               
                 RdEN_comp      = 1;
@@ -298,7 +305,7 @@ always @(*) begin
             end
             else begin
                 ALU_EN_comp    = 0;               
-                ALU_F_comp     = 0; 
+                ALU_F_en       = 0; 
                 Add_R_E        = 0;               
                 WrEN_comp      = 0;               
                 RdEN_comp      = 0;               
@@ -311,7 +318,7 @@ always @(*) begin
         A_Receive: begin
             if (RxValid) begin
                 ALU_EN_comp = 0;               
-                ALU_F_comp  = 0;                
+                ALU_F_en    = 0;                
                 WrEN_comp   = 1;               
                 RdEN_comp   = 0; 
                 op_add_comp = 0;               
@@ -320,7 +327,7 @@ always @(*) begin
             end
             else begin
                 ALU_EN_comp = 0;               
-                ALU_F_comp  = 0;              
+                ALU_F_en    = 0;              
                 WrEN_comp   = 0;               
                 RdEN_comp   = 0;               
                 WrData_comp = 0;
@@ -331,7 +338,7 @@ always @(*) begin
         B_Receive: begin
             if (RxValid) begin
                 ALU_EN_comp = 0;               
-                ALU_F_comp  = 0;                
+                ALU_F_en    = 0;                
                 WrEN_comp   = 1;               
                 RdEN_comp   = 0; 
                 op_add_comp = 1;               
@@ -340,7 +347,7 @@ always @(*) begin
             end
             else begin
                 ALU_EN_comp = 0;               
-                ALU_F_comp  = 0;               
+                ALU_F_en    = 0;               
                 WrEN_comp   = 0;               
                 RdEN_comp   = 0; 
                 op_add_comp = 0;               
@@ -353,14 +360,14 @@ always @(*) begin
             CLK_GATE_EN   = 1;
             if (RxValid) begin
                 ALU_EN_comp   = 1;               
-                ALU_F_comp    = Rx_P_Data;               
+                ALU_F_en      = 1;               
                 WrEN_comp     = 0;               
                 RdEN_comp     = 0;               
                 WrData_comp   = 0;
             end
             else begin
                 ALU_EN_comp   = 0;               
-                ALU_F_comp    = 0;               
+                ALU_F_en      = 0;               
                 WrEN_comp     = 0;               
                 RdEN_comp     = 0;               
                 WrData_comp   = 0;
@@ -371,7 +378,7 @@ always @(*) begin
             waitcount   = 1;
             CLK_GATE_EN = 1;
             ALU_EN_comp = 0;               
-            ALU_F_comp  = 0;               
+            ALU_F_en    = 0;               
             WrEN_comp   = 0;               
             RdEN_comp   = 0;               
             WrData_comp = 0;
@@ -379,7 +386,7 @@ always @(*) begin
         
         default: begin
             ALU_EN_comp = 0;               
-            ALU_F_comp  = 0;               
+            ALU_F_en    = 0;               
             WrEN_comp   = 0;               
             RdEN_comp   = 0;               
             WrData_comp = 0;

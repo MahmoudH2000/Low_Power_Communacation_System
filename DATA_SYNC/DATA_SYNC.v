@@ -45,10 +45,10 @@ always @(posedge CLK, negedge Reset) begin
 end
 
 generate
-    if (S_TO_F) begin
+    if (S_TO_F) begin : Slow_TO_Fast
         assign Pulse_gen_out = ~Pulse_gen_FF & flops_out[NUM_Stages-1];
     end
-    else begin
+    else begin : Fast_TO_Slow
         assign Pulse_gen_out = Pulse_gen_FF ^ flops_out[NUM_Stages-1];
     end
 endgenerate

@@ -107,7 +107,7 @@ CLK_div CLK_div_top(
     .CLK_Ref(UART_CLK),
     .Reset(Uart_RST),
     .CLK_EN(1'b1),
-    .div(REG3[4:0]),
+    .div(REG3[3:0]),
     .CLK_div_out(Tx_CLK)
 );
 

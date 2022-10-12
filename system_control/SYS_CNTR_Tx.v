@@ -21,7 +21,7 @@ module SYS_CNTR_Tx #(
     /*          transmitter outputs               */
     //---------------------------------------------
     input  wire                        Busy,
-    input  wire                        Ser_done, // to tell the controller you can send
+    input  wire                        can_send, // to tell the controller you can send
     //---------------------------------------------
     /*          transmitter inputs               */
     //---------------------------------------------
@@ -45,7 +45,6 @@ reg [1:0] next_state;
 //---------------------------------------------
 
 wire                 is_Arith;   // high if we are making an arithmatic op
-reg [(2*width)-1:0]  ALU_out_M;   
 reg                  Tx_valid_comp;
 reg [width-1:0]      Tx_Data_comp;
 reg                  ALU_send;   // high if we are sending ALU output
@@ -54,15 +53,6 @@ reg                  Reg_send;   // high if we are sending Reg_File output
 //---------------------------------------------
 /*      Data Registring and calculations     */
 //---------------------------------------------
-
-always @(posedge CLK, negedge Reset) begin
-    if (!Reset) begin
-        ALU_out_M <= 0;
-    end
-    else if (ALU_out_valid) begin
-        ALU_out_M <= ALU_out;
-    end
-end
 
 always @(posedge CLK, negedge Reset) begin
     if (!Reset) begin
@@ -155,10 +145,10 @@ always @(*) begin
                     2'b01:  Tx_Data_comp  = RdData;
                     2'b10: begin
                         if (is_Arith) begin
-                            Tx_Data_comp = ALU_out_M[(2*width)-1:width];
+                            Tx_Data_comp = ALU_out[(2*width)-1:width];
                         end
                         else begin
-                            Tx_Data_comp = ALU_out_M[width-1:0];
+                            Tx_Data_comp = ALU_out[width-1:0];
                         end
                     end  
                     default: Tx_Data_comp = 0;
@@ -170,19 +160,19 @@ always @(*) begin
         wait_s: begin
             next_state    = AlU_trans;
             Tx_valid_comp = 0;
-            Tx_Data_comp  = ALU_out_M[width-1:0];
+            Tx_Data_comp  = ALU_out[width-1:0];
         end
 
         AlU_trans: begin
-            if (Ser_done) begin
+            if (can_send) begin
                 next_state    = Idle;
                 Tx_valid_comp = 1;
-                Tx_Data_comp  = ALU_out_M[(2*width)-1:width];
+                Tx_Data_comp  = ALU_out[(2*width)-1:width];
             end
             else begin
                 next_state    = AlU_trans;
                 Tx_valid_comp = 0;
-                Tx_Data_comp  = ALU_out_M[width-1:0];
+                Tx_Data_comp  = ALU_out[width-1:0];
             end
         end
 
@@ -193,10 +183,10 @@ always @(*) begin
                 2'b01:  Tx_Data_comp  = RdData;
                 2'b10: begin
                     if (is_Arith) begin
-                        Tx_Data_comp = ALU_out_M[(2*width)-1:width];
+                        Tx_Data_comp = ALU_out[(2*width)-1:width];
                     end
                     else begin
-                        Tx_Data_comp = ALU_out_M[width-1:0];
+                        Tx_Data_comp = ALU_out[width-1:0];
                     end
                 end  
                 default: Tx_Data_comp = 0;

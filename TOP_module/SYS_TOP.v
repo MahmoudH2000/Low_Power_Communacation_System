@@ -40,8 +40,8 @@ wire [width-1:0]          REG0;
 wire [width-1:0]          REG1;
 wire [width-1:0]          REG2;
 wire [width-1:0]          REG3;
-wire                      Ser_done;
-wire                      Ser_done_sync;
+wire                      can_send;
+wire                      can_send_sync;
 
 //---------------------------------------------
 /*       SYSTEM Control instantiation        */
@@ -68,7 +68,7 @@ SYS_Control #(
     .Tx_Data(Tx_Data_REF),
     .Tx_Data_valid(Tx_valid_REF),   
     .CLK_GATE_EN(CLK_GATE_EN),
-    .Ser_done(Ser_done_sync)  
+    .can_send(can_send_sync)  
 );
 
 //---------------------------------------------
@@ -148,15 +148,15 @@ ALU #(.A_width(width),
 );
 
 //---------------------------------------------
-/*        Ser_done bit sync instantiation    */
+/*        can_send bit sync instantiation    */
 //---------------------------------------------
 BIT_SYNC #(.NUM_Stages(2), 
            .Width(1)
 ) BIT_SYNC_CanSend (
-    .Async_data(Ser_done), 
+    .Async_data(can_send), 
     .CLK(REF_CLK), 
     .Reset(REF_RST),
-    .sync_data(Ser_done_sync)
+    .sync_data(can_send_sync)
 );
 
 //---------------------------------------------
@@ -219,7 +219,7 @@ UART  #(.width(width)
     .Parity_EN(REG2[0]),
     .Parity_type(REG2[1]),
     .Prescale(REG2[6:2]),
-    .Ser_done(Ser_done)    
+    .can_send(can_send)    
 );
     
 endmodule

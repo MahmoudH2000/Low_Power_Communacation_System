@@ -8,7 +8,8 @@ module serializer #(parameter width = 8) (
     input  wire             Ser_EN,      // sent by the FSM to tell the serializer to start working
     input  wire             Busy,        // to tell the serializer that the uart is sending so don't accept new data
     output reg              Ser_data,    // serialized output
-    output reg              Ser_done     // when the serializer is done
+    output reg              Ser_done,     // when the serializer is done
+    output reg              can_send
 );
 
 /*
@@ -30,6 +31,15 @@ always @(*) begin
     end
     else begin
         Ser_done = 1'b0;
+    end
+end
+
+always @(*) begin
+    if(counter == width-2) begin
+        can_send = 1'b1;
+    end
+    else begin
+        can_send = 1'b0;
     end
 end
 

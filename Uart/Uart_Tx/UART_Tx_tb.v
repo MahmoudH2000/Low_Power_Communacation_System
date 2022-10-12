@@ -10,7 +10,7 @@ reg            Data_valid_tb;
 reg  [7:0]     Data_tb;
 wire           Busy_tb;
 wire           Tx_out_tb;
-wire           Ser_done_tb;
+wire           can_send_tb;
 
 /* UART_Tx instantiation */
 UART_Tx #(.width(8))
@@ -24,7 +24,7 @@ DUT(
     .Data(Data_tb),
     .Busy(Busy_tb),
     .Tx_out(Tx_out_tb),
-    .Ser_done(Ser_done_tb)
+    .can_send(can_send_tb)
 );
 
 

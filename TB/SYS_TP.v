@@ -50,28 +50,28 @@ Reset_tb = 1'b1;
 
 #30 
 
-send_data_P(11'b0_01010101_0_1); // write
-send_data_P(11'b0_01010000_0_1); // Adress = 1010
-send_data_P(11'b0_11111111_0_1); // data = 11111111
-#200
-send_data_P(11'b0_11011101_0_1); // Read
-send_data_P(11'b0_01010000_0_1); // Adress = 1010
-#200
-send_data_P(11'b0_00110011_0_1); // ALU_OP
-send_data_P(11'b0_11110000_0_1); // A = 00001111
-send_data_P(11'b0_11111111_0_1); // B = 11111111
-send_data_P(11'b0_00000000_0_1); // ADD = 100001110
-#200
-send_data_P(11'b0_00110011_0_1); // ALU_OP
-send_data_P(11'b0_00010000_1_1); // A = 8
-send_data_P(11'b0_00000001_1_1); // B = 128
-send_data_P(11'b0_01000000_1_1); // mul = 100_00000000
-#8800
-send_data_P(11'b0_10111011_0_1); // ALU_with_no_OP
-send_data_P(11'b0_11010000_1_1); // compare A > B
-#200
-send_data_P(11'b0_10111011_0_1); // ALU_with_no_OP
-send_data_P(11'b0_00110000_0_1); // compare A < B
+send_data_P(8'b01010101); // write
+send_data_P(8'b01010000); // Adress = 1010
+send_data_P(8'b01010000); // data = 11111111
+
+send_data_P(8'b11011101); // Read
+send_data_P(8'b01010000); // Adress = 1010
+
+send_data_P(8'b00110011); // ALU_OP
+send_data_P(8'b11110000); // A = 00001111
+send_data_P(8'b11111111); // B = 11111111
+send_data_P(8'b00000000); // ADD = 100001110
+
+send_data_P(8'b00110011); // ALU_OP
+send_data_P(8'b00010000); // A = 8
+send_data_P(8'b00000001); // B = 128
+send_data_P(8'b01000000); // mul = 100_00000000
+
+send_data_P(8'b10111011); // ALU_with_no_OP
+send_data_P(8'b11010000); // compare A > B
+
+send_data_P(8'b10111011); // ALU_with_no_OP
+send_data_P(8'b00110000); // compare A < B
 
 #100000
 
@@ -80,13 +80,19 @@ $stop ;
 end
 
 task send_data_P (
-    input  [width+2:0] data
+    input  [width-1:0] data
 );
 begin
-    for (i = width+2; i>=0; i=i-1) begin
+    Rx_IN_tb = 0;
+    #(8*100);
+    for (i = width-1; i>=0; i=i-1) begin
         Rx_IN_tb = data[i];
         #(8*100);
     end
+    Rx_IN_tb = ^data;
+    #(8*100);
+    Rx_IN_tb = 1;
+    #(8*100);
 end
 endtask
 

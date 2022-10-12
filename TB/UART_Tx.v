@@ -8,7 +8,7 @@ module UART_Tx #(parameter width = 8) (
     input  wire  [width-1:0] Data,        
     output reg               Busy,        // high when the uart is sending (I.e. not Idle)
     output reg               Tx_out,       // data sent
-    output wire              Ser_done
+    output reg               can_send
 );
 
 /*
@@ -21,6 +21,8 @@ when it gets high the serializer and the FSM start working
 wire       Parity_bit;
 wire [1:0] Mux_control;
 
+wire       can_send_out;
+wire       Ser_done;
 wire       Ser_Data;
 wire       Ser_EN;
 reg        Tx_out_comp;
@@ -45,12 +47,14 @@ end
 /* registering the outputs */
 always @(posedge CLK, negedge Reset) begin
     if (!Reset) begin
-        Tx_out <= 1'b0;
-        Busy   <= 0;
+        Tx_out   <= 1'b0;
+        Busy     <= 0;
+        can_send <= 0;
     end
     else begin
-        Tx_out <= Tx_out_comp;
-        Busy   <= Busy_comp;
+        Tx_out   <= Tx_out_comp;
+        Busy     <= Busy_comp;
+        can_send <= can_send_out;
     end
 end
 
@@ -81,7 +85,8 @@ serializer_top(
     .Ser_EN(Ser_EN),
     .Busy(Busy_comp),
     .Ser_data(Ser_Data),
-    .Ser_done(Ser_done)
+    .Ser_done(Ser_done),
+    .can_send(can_send_out)
 );
     
 endmodule

@@ -115,14 +115,21 @@ end
 
 always @(posedge CLK,  negedge Reset) begin
     if (!Reset) begin
-        ALU_out   <=  'b0;
         Out_valid <= 1'b0;
     end
     else begin
-        ALU_out   <= ALU_out_comb;
         Out_valid <= Out_valid_comb; 
     end
     
+end
+
+always @(posedge CLK,  negedge Reset) begin
+    if (!Reset) begin
+        ALU_out   <=  'b0;
+    end
+    else if (ALU_EN) begin
+        ALU_out   <= ALU_out_comb; 
+    end
 end
 
 endmodule

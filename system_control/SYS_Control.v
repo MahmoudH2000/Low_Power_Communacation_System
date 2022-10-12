@@ -67,6 +67,7 @@ Rx_Control_top(
     .Reset(Reset),
     .Rx_P_Data(Rx_P_Data),
     .RxValid(RxValid),
+    .Busy(Busy),
     .ALU_EN(ALU_EN),               
     .ALU_FUN(ALU_FUN), 
     .Reg_File_Adress(Reg_File_Adress),               

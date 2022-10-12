@@ -38,12 +38,12 @@ module SYS_CNTR_Rx #(
 localparam Idle           = 4'b0000;
 localparam WAddr_Receive  = 4'b0010;
 localparam Data_Receive   = 4'b0011;
-localparam RAddr_Receive  = 4'b0001;
-localparam Check_Busy_Reg = 4'b1001;
+localparam RAddr_Receive  = 4'b0001; 
+localparam Check_Busy_Reg = 4'b1001; // wait for the busy signal to come down then send
 localparam A_Receive      = 4'b0100;
-localparam B_Receive      = 4'b0101; //
+localparam B_Receive      = 4'b0101; 
 localparam FUN_Receive    = 4'b0111;
-localparam Check_Busy_ALU = 4'b1111;
+localparam Check_Busy_ALU = 4'b1111; // wait for the busy signal to come down then send
 localparam wait_s         = 4'b1110; 
 /* the wais state is to make the CLK gate cell run 
 for one more cycle to let the ALU capture the result */

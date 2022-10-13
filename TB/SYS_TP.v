@@ -52,7 +52,7 @@ Reset_tb = 1'b1;
 
 send_data_P(8'b01010101); // write
 send_data_P(8'b01010000); // Adress = 1010
-send_data_P(8'b01010000); // data = 11111111
+send_data_P(8'b01010000); // data = 1010
 
 send_data_P(8'b11011101); // Read
 send_data_P(8'b01010000); // Adress = 1010

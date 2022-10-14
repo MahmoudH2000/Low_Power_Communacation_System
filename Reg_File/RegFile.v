@@ -33,7 +33,7 @@ always @(posedge CLK, negedge Reset) begin
                 reg_file[i] <= 'b0000_1000;
             end
             else begin
-                reg_file[i] <= 16'b0;    
+                reg_file[i] <= 'b0;    
             end
              
         end

@@ -42,27 +42,6 @@ wire [width-1:0]          REG2;
 wire [width-1:0]          REG3;
 wire                      can_send;
 wire                      can_send_sync;
-wire                      Empty;
-wire                      FIFO_EN;
-
-//---------------------------------------------
-/*         FIFO instantiation                */
-//---------------------------------------------
-SYNC_FIFO #(.width(width),
-            .FDPTH(4)) SYNC_FIFO_top(
-    // input & output ports
-    .CLK(REF_CLK),
-    .Reset(REF_RST),
-    .ALU_valid(ALU_out_valid),
-    .RD_valid(Rd_valid),
-    .RD_EN(FIFO_EN),
-    .ALU_FUN(ALU_FUN),
-    .ALU_out(ALU_out),
-    .RD_out(RdData),
-    .Embty(Empty),
-    .Data(Tx_Data_REF),
-    .valid(Tx_valid_REF)
-);
 
 //---------------------------------------------
 /*       SYSTEM Control instantiation        */
@@ -75,17 +54,21 @@ SYS_Control #(
     .Reset(REF_RST),
     .Rx_P_Data(Rx_out_sync),
     .RxValid(RxValid_sync),
+    .ALU_out(ALU_out),
+    .ALU_out_valid(ALU_out_valid),
     .ALU_EN(ALU_EN),               
-    .ALU_FUN(ALU_FUN),
+    .ALU_FUN(ALU_FUN), 
+    .RdData(RdData),
+    .Rd_valid(Rd_valid),
     .Reg_File_Adress(Reg_File_Adress),               
     .WrEN(WrEN),               
     .RdEN(RdEN),               
     .WrData(WrData),
     .Busy(Busy_sync),
-    .can_send(can_send_sync),
-    .Empty(Empty),
-    .FIFO_EN(FIFO_EN),
-    .CLK_GATE_EN(CLK_GATE_EN) 
+    .Tx_Data(Tx_Data_REF),
+    .Tx_Data_valid(Tx_valid_REF),   
+    .CLK_GATE_EN(CLK_GATE_EN),
+    .can_send(can_send_sync)  
 );
 
 //---------------------------------------------

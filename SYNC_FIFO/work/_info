@@ -5,21 +5,21 @@ cModel Technology
 Z0 dE:\plus ultra\digital\system\SYNC_FIFO
 vSYNC_FIFO
 !i10b 1
-!s100 Z^O3_OVBPLf94A<UBXI423
-I813zleP;g?f7nS;XC:B2F2
-V;7AXTI7?2h6ML`6YZVV?W3
+!s100 H]26DcZIFGUl:2YW]k1:M0
+IB@1:i0OFz_InFzKaF:oVc3
+VEZOb7HJG5Nc[jd42oP^Tz2
 Z1 dE:\plus ultra\digital\system\SYNC_FIFO
-w1665737530
-Z2 8SYNC_FIFO.v
-Z3 FSYNC_FIFO.v
+w1665825996
+8SYNC_FIFO.v
+FSYNC_FIFO.v
 L0 1
-Z4 OV;L;10.1d;51
+OV;L;10.1d;51
 r1
 !s85 0
 31
-!s108 1665737532.186000
+!s108 1665850690.049000
 !s107 SYNC_FIFO.v|
-Z5 !s90 SYNC_FIFO.v|
+!s90 SYNC_FIFO.v|
 !s101 -O0
 o-O0
-Z6 n@s@y@n@c_@f@i@f@o
+n@s@y@n@c_@f@i@f@o

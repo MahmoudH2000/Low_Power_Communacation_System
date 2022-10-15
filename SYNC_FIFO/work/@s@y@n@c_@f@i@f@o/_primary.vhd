@@ -3,7 +3,7 @@ use verilog.vl_types.all;
 entity SYNC_FIFO is
     generic(
         width           : integer := 8;
-        Depth           : integer := 4
+        FDPTH           : integer := 4
     );
     port(
         CLK             : in     vl_logic;
@@ -20,5 +20,5 @@ entity SYNC_FIFO is
     );
     attribute mti_svvh_generic_type : integer;
     attribute mti_svvh_generic_type of width : constant is 1;
-    attribute mti_svvh_generic_type of Depth : constant is 1;
+    attribute mti_svvh_generic_type of FDPTH : constant is 1;
 end SYNC_FIFO;

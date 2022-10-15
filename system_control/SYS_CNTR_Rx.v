@@ -12,7 +12,6 @@ module SYS_CNTR_Rx #(
     //---------------------------------------------
     input  wire  [width-1:0]          Rx_P_Data,
     input  wire                       RxValid,
-    input  wire                       Busy,
     //---------------------------------------------
     /*            ALU inputs                     */
     //---------------------------------------------
@@ -35,21 +34,19 @@ module SYS_CNTR_Rx #(
 /*               States                      */
 //--------------------------------------------- 
 
-localparam Idle           = 4'b0000;
-localparam WAddr_Receive  = 4'b0010;
-localparam Data_Receive   = 4'b0011;
-localparam RAddr_Receive  = 4'b0001; 
-localparam Check_Busy_Reg = 4'b1001; // wait for the busy signal to come down then send
-localparam A_Receive      = 4'b0100;
-localparam B_Receive      = 4'b0101; 
-localparam FUN_Receive    = 4'b0111;
-localparam Check_Busy_ALU = 4'b1111; // wait for the busy signal to come down then send
-localparam wait_s         = 4'b1110; 
+localparam Idle          = 3'b000;
+localparam WAddr_Receive = 3'b010;
+localparam Data_Receive  = 3'b011;
+localparam RAddr_Receive = 3'b001;   
+localparam A_Receive     = 3'b100;
+localparam B_Receive     = 3'b101;
+localparam FUN_Receive   = 3'b111;
+localparam wait_s        = 3'b110; 
 /* the wais state is to make the CLK gate cell run 
 for one more cycle to let the ALU capture the result */
 
-reg [3:0] curr_state;
-reg [3:0] next_state;
+reg [2:0] curr_state;
+reg [2:0] next_state;
 
 //---------------------------------------------
 /*          internal signals                 */
@@ -138,19 +135,10 @@ always @(*) begin
 /*              Read command                 */
         RAddr_Receive: begin
             if (RxValid) begin
-                next_state = Check_Busy_Reg;
-            end
-            else begin
-                next_state = RAddr_Receive;
-            end
-        end
-
-        Check_Busy_Reg: begin
-            if (!Busy) begin
                 next_state = Idle;
             end
             else begin
-                next_state = Check_Busy_Reg;
+                next_state = RAddr_Receive;
             end
         end
         
@@ -175,19 +163,10 @@ always @(*) begin
 
         FUN_Receive: begin
             if (RxValid) begin
-                next_state = Check_Busy_ALU;
-            end
-            else begin
-                next_state = FUN_Receive;
-            end
-        end
-
-        Check_Busy_ALU: begin
-            if (!Busy) begin
                 next_state = wait_s;
             end
             else begin
-                next_state = Check_Busy_ALU;
+                next_state = FUN_Receive;
             end
         end
 
@@ -315,19 +294,7 @@ always @(*) begin
 
 /*              Read command                 */
         RAddr_Receive: begin
-
-            ALU_EN_comp    = 0;               
-            ALU_F_en       = 0; 
-            Add_R_E        = 0;               
-            WrEN_comp      = 0;               
-            RdEN_comp      = 0;               
-            WrData_comp    = 0;
-            CLK_GATE_EN    = 0;
-
-        end
-
-        Check_Busy_Reg: begin
-            if (!Busy) begin
+            if (RxValid) begin
                 ALU_EN_comp    = 0;               
                 ALU_F_en       = 0; 
                 Add_R_E        = 1;               
@@ -391,16 +358,7 @@ always @(*) begin
 
         FUN_Receive: begin
             CLK_GATE_EN   = 1;
-            ALU_EN_comp   = 0;               
-            ALU_F_en      = 0;               
-            WrEN_comp     = 0;               
-            RdEN_comp     = 0;               
-            WrData_comp   = 0;
-        end
-
-        Check_Busy_ALU: begin
-            CLK_GATE_EN   = 1;
-            if (!Busy) begin
+            if (RxValid) begin
                 ALU_EN_comp   = 1;               
                 ALU_F_en      = 1;               
                 WrEN_comp     = 0;               

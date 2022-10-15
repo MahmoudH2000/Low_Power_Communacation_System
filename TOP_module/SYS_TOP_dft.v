@@ -54,11 +54,18 @@ wire [width-1:0]          REG2;
 wire [width-1:0]          REG3;
 wire                      can_send;
 wire                      can_send_sync;
+wire                      Empty;
+wire                      FIFO_EN;
 
 //----------------------------------------------------------//
 //                           DFT                            //
 //----------------------------------------------------------//
-wire CLK_M_REF, CLK_M_UART, RST_M;
+wire CLK_M_REF;  
+wire CLK_M_UART; 
+wire div_CLK_M;  
+wire RST_M;     
+wire RST_M_UART;
+wire RST_M_REF;  
 
 assign CLK_M_REF  = test_mode ? scan_CLK : REF_CLK;
 assign CLK_M_UART = test_mode ? scan_CLK : UART_CLK;
@@ -66,6 +73,25 @@ assign div_CLK_M  = test_mode ? scan_CLK : Tx_CLK;
 assign RST_M      = test_mode ? scan_RST : Reset;
 assign RST_M_UART = test_mode ? scan_RST : Uart_RST;
 assign RST_M_REF  = test_mode ? scan_RST : REF_RST;
+
+//---------------------------------------------
+/*         FIFO instantiation                */
+//---------------------------------------------
+SYNC_FIFO #(.width(width),
+            .FDPTH(4)) SYNC_FIFO_top(
+    // input & output ports
+    .CLK(CLK_M_REF),
+    .Reset(RST_M_REF),
+    .ALU_valid(ALU_out_valid),
+    .RD_valid(Rd_valid),
+    .RD_EN(FIFO_EN),
+    .ALU_FUN(ALU_FUN),
+    .ALU_out(ALU_out),
+    .RD_out(RdData),
+    .Embty(Empty),
+    .Data(Tx_Data_REF),
+    .valid(Tx_valid_REF)
+);
 
 //---------------------------------------------
 /*       SYSTEM Control instantiation        */
@@ -78,21 +104,17 @@ SYS_Control #(
     .Reset(RST_M_REF),
     .Rx_P_Data(Rx_out_sync),
     .RxValid(RxValid_sync),
-    .ALU_out(ALU_out),
-    .ALU_out_valid(ALU_out_valid),
     .ALU_EN(ALU_EN),               
-    .ALU_FUN(ALU_FUN), 
-    .RdData(RdData),
-    .Rd_valid(Rd_valid),
+    .ALU_FUN(ALU_FUN),
     .Reg_File_Adress(Reg_File_Adress),               
     .WrEN(WrEN),               
     .RdEN(RdEN),               
     .WrData(WrData),
     .Busy(Busy_sync),
-    .Tx_Data(Tx_Data_REF),
-    .Tx_Data_valid(Tx_valid_REF),   
-    .CLK_GATE_EN(CLK_GATE_EN),
-    .can_send(can_send_sync)  
+    .can_send(can_send_sync),
+    .Empty(Empty),
+    .FIFO_EN(FIFO_EN),
+    .CLK_GATE_EN(CLK_GATE_EN) 
 );
 
 //---------------------------------------------
@@ -110,7 +132,7 @@ CLK_GATE CLK_GATE_top(
 RST_SYNC #(.NUM_Stages(2)) 
 RST_SYNC_REF(
     .CLK(CLK_M_REF), 
-    .Async_Reset(RST_M),
+    .Async_Reset(Reset),
     .sync_Reset(REF_RST)
 );
 
@@ -120,7 +142,7 @@ RST_SYNC_REF(
 RST_SYNC #(.NUM_Stages(2)) 
 RST_SYNC_UART(
     .CLK(CLK_M_UART), 
-    .Async_Reset(RST_M),
+    .Async_Reset(Reset),
     .sync_Reset(Uart_RST)
 );
 

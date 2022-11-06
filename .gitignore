@@ -8,6 +8,7 @@ ALU/work/
 BIT_SYNC/work/
 CLK_DIV/work/
 CLK_GATE/work/
+CDC/work/
 DATA_SYNC/work/
 RST_SYNC/work/
 system_control/work/

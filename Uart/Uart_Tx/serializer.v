@@ -35,7 +35,7 @@ always @(*) begin
 end
 
 always @(*) begin
-    if(counter == width) begin
+    if(counter == width-2) begin
         can_send = 1'b1;
     end
     else begin
